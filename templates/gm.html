@@ -110,15 +110,13 @@ function renderMain() {
     p[cat].forEach((item, idx) => {
       const revealed = p.revealed[cat][idx];
       div.innerHTML += `
-        <div class="list-item-row">
-          <span contenteditable="false">${item}</span>
-          <label class="switch">
-            <input type="checkbox" ${revealed ? 'checked' : ''} onchange="handleToggleReveal(this)" data-profile-index="${selectedProfileIndex}" data-category="${cat}" data-item-index="${idx}">
-            <span class="slider"></span>
-          </label>
-          <span class="switch-label">${revealed ? 'Revealed' : 'Hidden'}</span>
-        </div>
-      `;
+  <p><strong>Influence Successes:</strong> 
+  <span id="influence-successes">${p.influence_successes}</span> / 
+  <span id="successes-needed" contenteditable="false">${p.successesNeeded ?? ''}</span>
+  <button class="influence-btn" onclick="incrementSuccess(${selectedProfileIndex})">+1</button>
+  <button class="influence-btn reset-btn" onclick="resetSuccess(${selectedProfileIndex})">Reset</button>
+  </p>
+`;
     });
   });
 
@@ -130,6 +128,11 @@ function enableEditMode(button, profileIndex) {
   const card = button.parentElement;
   const spans = card.querySelectorAll('span[contenteditable="false"]');
   spans.forEach(span => span.contentEditable = true);
+
+  const successesNeededSpan = document.getElementById('successes-needed');
+  const currentValue = successesNeededSpan.textContent.trim();
+  successesNeededSpan.outerHTML = `<input id="successes-needed-input" type="number" value="${currentValue}" style="width: 50px;">`;
+
 
   const listSections = ['biases', 'strengths', 'weaknesses', 'influence_skills'];
   listSections.forEach(section => {
@@ -175,7 +178,7 @@ function saveProfileEdits(card, profileIndex) {
     attitude: spans[5]?.textContent ?? '',
     benefit: spans[6]?.textContent ?? '',
     special: spans[7]?.textContent ?? '',
-    successesNeeded: profile.successesNeeded ?? 1,  // <-- Pull from profile, NOT editable anymore!
+    successesNeeded: document.getElementById('successes-needed-input')?.value ?? profile.successesNeeded,
     biases: collectListInputs('biases'),
     strengths: collectListInputs('strengths'),
     weaknesses: collectListInputs('weaknesses'),
