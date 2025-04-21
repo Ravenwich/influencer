@@ -95,7 +95,7 @@ function renderMain() {
     <h2><span contenteditable="false">${p.name}</span></h2>
     <button class="edit-btn" onclick="enableEditMode(this, ${selectedProfileIndex})">Edit</button>
     <button class="edit-btn delete-btn" onclick="deleteProfile(${selectedProfileIndex})">Delete</button>
-    <p><strong>Influence Successes:</strong> ${p.influence_successes}
+    <p><strong>Influence Successes:</strong> ${p.influence_successes} / ${p.successesNeeded}
       <button class="influence-btn" onclick="incrementSuccess(${selectedProfileIndex})">+1</button>
       <button class="influence-btn reset-btn" onclick="resetSuccess(${selectedProfileIndex})">Reset</button>
     </p>
@@ -104,8 +104,6 @@ function renderMain() {
   ['appearance','background','personality','goal','attitude','benefit','special'].forEach(field => {
     div.innerHTML += `<p><strong>${field.charAt(0).toUpperCase() + field.slice(1)}:</strong> <span contenteditable="false">${p[field] || ''}</span></p>`;
   });
-
-  div.innerHTML += `<p><strong>Successes Needed:</strong> <span contenteditable="false">${p.successesNeeded ?? ''}</span></p>`;
 
   ['biases', 'strengths', 'weaknesses', 'influence_skills'].forEach(cat => {
     div.innerHTML += `<p class="section-title">${cat.replace('_', ' ').toUpperCase()}:</p><div id="${cat}-list">`;
@@ -123,8 +121,6 @@ function renderMain() {
         </div>
       `;
     });
-
-    div.innerHTML += `<button class="icon-btn" onclick="addListItem('${cat}')">➕</button></div>`;
   });
 
   container.appendChild(div);
