@@ -11,6 +11,10 @@ import uuid
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
+app.config['DEBUG'] = True
+app.config['PROPAGATE_EXCEPTIONS'] = True
+
+
 PROFILE_FILE = 'profiles.json'
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}

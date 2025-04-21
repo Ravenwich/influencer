@@ -263,6 +263,8 @@ function saveProfileEdits(card, profileIndex) {
   }
 };
 
+console.log('Sending profile edit:', data);
+
 
   fetch('/api/edit_profile', {
     method: 'POST',
