@@ -240,27 +240,29 @@ function saveProfileEdits(card, profileIndex) {
   const influenceSkillsData = collectListInputsAndReveals('influence_skills');
 
   const data = {
-    profile_index: profileIndex,
-    name: spans[0]?.textContent ?? '',
-    appearance: spans[1]?.textContent ?? '',
-    background: spans[2]?.textContent ?? '',
-    personality: spans[3]?.textContent ?? '',
-    goal: spans[4]?.textContent ?? '',
-    attitude: spans[5]?.textContent ?? '',
-    benefit: spans[6]?.textContent ?? '',
-    special: spans[7]?.textContent ?? '',
-    successesNeeded: document.getElementById('successes-needed-input')?.value ?? profile.successesNeeded,
-    biases: biasesData.items.join('; '),
-    strengths: strengthsData.items.join('; '),
-    weaknesses: weaknessesData.items.join('; '),
-    influence_skills: influenceSkillsData.items.join('; '),
-    revealed: {
-      biases: biasesData.revealed,
-      strengths: strengthsData.revealed,
-      weaknesses: weaknessesData.revealed,
-      influence_skills: influenceSkillsData.revealed
-    }
-  };
+  profile_index: profileIndex,
+  name: spans[0]?.textContent ?? '',
+  appearance: spans[1]?.textContent ?? '',
+  background: spans[2]?.textContent ?? '',
+  personality: spans[3]?.textContent ?? '',
+  goal: spans[4]?.textContent ?? '',
+  attitude: spans[5]?.textContent ?? '',
+  benefit: spans[6]?.textContent ?? '',
+  special: spans[7]?.textContent ?? '',
+  successesNeeded: document.getElementById('successes-needed-input')?.value ?? profile.successesNeeded,
+  influence_successes: parseInt(document.getElementById('influence-successes')?.textContent.trim()) || 0,  // <-- ADD THIS
+  biases: biasesData.items.join('; '),
+  strengths: strengthsData.items.join('; '),
+  weaknesses: weaknessesData.items.join('; '),
+  influence_skills: influenceSkillsData.items.join('; '),
+  revealed: {
+    biases: biasesData.revealed,
+    strengths: strengthsData.revealed,
+    weaknesses: weaknessesData.revealed,
+    influence_skills: influenceSkillsData.revealed
+  }
+};
+
 
   fetch('/api/edit_profile', {
     method: 'POST',
