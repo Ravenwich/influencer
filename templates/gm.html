@@ -98,8 +98,7 @@ function renderMain() {
     <p><strong>Influence Successes:</strong> ${p.influence_successes} / ${p.successesNeeded}
       <button class="influence-btn" onclick="incrementSuccess(${selectedProfileIndex})">+1</button>
       <button class="influence-btn reset-btn" onclick="resetSuccess(${selectedProfileIndex})">Reset</button>
-    </p>
-  `;
+    </p>`;
 
   ['appearance','background','personality','goal','attitude','benefit','special'].forEach(field => {
     div.innerHTML += `<p><strong>${field.charAt(0).toUpperCase() + field.slice(1)}:</strong> <span contenteditable="false">${p[field] || ''}</span></p>`;
@@ -168,15 +167,15 @@ function saveProfileEdits(card, profileIndex) {
 
   const data = {
     profile_index: profileIndex,
-    name: spans[0].textContent,
-    appearance: spans[1].textContent,
-    background: spans[2].textContent,
-    personality: spans[3].textContent,
-    goal: spans[4].textContent,
-    attitude: spans[5].textContent,
-    benefit: spans[6].textContent,
-    special: spans[7].textContent,
-    successesNeeded: spans[8].textContent,
+    name: spans[0]?.textContent ?? '',
+    appearance: spans[1]?.textContent ?? '',
+    background: spans[2]?.textContent ?? '',
+    personality: spans[3]?.textContent ?? '',
+    goal: spans[4]?.textContent ?? '',
+    attitude: spans[5]?.textContent ?? '',
+    benefit: spans[6]?.textContent ?? '',
+    special: spans[7]?.textContent ?? '',
+    successesNeeded: profile.successesNeeded ?? 1,  // <-- Pull from profile, NOT editable anymore!
     biases: collectListInputs('biases'),
     strengths: collectListInputs('strengths'),
     weaknesses: collectListInputs('weaknesses'),
@@ -191,6 +190,7 @@ function saveProfileEdits(card, profileIndex) {
     fetchProfiles();
   });
 }
+
 
 function collectListInputs(sectionId) {
   const section = document.getElementById(`${sectionId}-list`);
