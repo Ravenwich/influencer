@@ -31,6 +31,23 @@
     input:checked + .slider { background-color: #28a745; }
     input:checked + .slider:before { transform: translateX(26px); }
     .switch-label { font-size: 12px; margin-left: 5px; vertical-align: middle; }
+    .icon-btn { background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  margin-left: 5px;
+}
+.icon-btn:hover {
+  color: #007bff;
+}
+.list-item-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+.list-item-row input {
+  flex: 1;
+}
   </style>
 </head>
 <body>
@@ -83,15 +100,19 @@ function renderMain() {
   const div = document.createElement('div');
   div.className = 'profile-card';
 
-  if (p.photo_filename) div.innerHTML += `<img src="/static/uploads/${p.photo_filename}" alt="Profile Photo" class="profile-photo">`;
+  if (p.photo_filename) {
+    div.innerHTML += `<img src="/static/uploads/${p.photo_filename}" alt="Profile Photo" class="profile-photo">`;
+  }
 
-  div.innerHTML += `<h2><span contenteditable="false">${p.name}</span></h2>
-  <button class="edit-btn" onclick="enableEditMode(this, ${selectedProfileIndex})">Edit</button>
-  <button class="edit-btn delete-btn" onclick="deleteProfile(${selectedProfileIndex})">Delete</button>
-  <p><strong>Influence Successes:</strong> ${p.influence_successes}
-    <button class="influence-btn" onclick="incrementSuccess(${selectedProfileIndex})">+1</button>
-    <button class="influence-btn reset-btn" onclick="resetSuccess(${selectedProfileIndex})">Reset</button>
-  </p>`;
+  div.innerHTML += `
+    <h2><span contenteditable="false">${p.name}</span></h2>
+    <button class="edit-btn" onclick="enableEditMode(this, ${selectedProfileIndex})">Edit</button>
+    <button class="edit-btn delete-btn" onclick="deleteProfile(${selectedProfileIndex})">Delete</button>
+    <p><strong>Influence Successes:</strong> ${p.influence_successes}
+      <button class="influence-btn" onclick="incrementSuccess(${selectedProfileIndex})">+1</button>
+      <button class="influence-btn reset-btn" onclick="resetSuccess(${selectedProfileIndex})">Reset</button>
+    </p>
+  `;
 
   ['appearance','background','personality','goal','attitude','benefit','special'].forEach(field => {
     div.innerHTML += `<p><strong>${field.charAt(0).toUpperCase() + field.slice(1)}:</strong> <span contenteditable="false">${p[field] || ''}</span></p>`;
@@ -100,61 +121,89 @@ function renderMain() {
   div.innerHTML += `<p><strong>Successes Needed:</strong> <span contenteditable="false">${p.successesNeeded ?? ''}</span></p>`;
 
   ['biases', 'strengths', 'weaknesses', 'influence_skills'].forEach(cat => {
-    div.innerHTML += `<p class="section-title">${cat.replace('_', ' ').toUpperCase()}:</p><ul>`;
+    div.innerHTML += `<p class="section-title">${cat.replace('_', ' ').toUpperCase()}:</p><div id="${cat}-list">`;
+
     p[cat].forEach((item, idx) => {
       const revealed = p.revealed[cat][idx];
-      div.innerHTML += `<li>${item}
-        <label class="switch">
-          <input type="checkbox" ${revealed ? 'checked' : ''} onchange="handleToggleReveal(this)" data-profile-index="${selectedProfileIndex}" data-category="${cat}" data-item-index="${idx}">
-          <span class="slider"></span>
-        </label>
-        <span class="switch-label">${revealed ? 'Revealed' : 'Hidden'}</span>
-      </li>`;
+      div.innerHTML += `
+        <div class="list-item-row">
+          <span contenteditable="false">${item}</span>
+          <label class="switch">
+            <input type="checkbox" ${revealed ? 'checked' : ''} onchange="handleToggleReveal(this)" data-profile-index="${selectedProfileIndex}" data-category="${cat}" data-item-index="${idx}">
+            <span class="slider"></span>
+          </label>
+          <span class="switch-label">${revealed ? 'Revealed' : 'Hidden'}</span>
+        </div>
+      `;
     });
-    div.innerHTML += `</ul>`;
+
+    div.innerHTML += `<button class="icon-btn" onclick="addListItem('${cat}')">➕</button></div>`;
   });
 
   container.appendChild(div);
 }
+
 
 function enableEditMode(button, profileIndex) {
   const card = button.parentElement;
   const spans = card.querySelectorAll('span[contenteditable="false"]');
   spans.forEach(span => span.contentEditable = true);
 
+  const listSections = ['biases', 'strengths', 'weaknesses', 'influence_skills'];
+  listSections.forEach(section => {
+    const listDiv = document.getElementById(`${section}-list`);
+    const items = listDiv.querySelectorAll('.list-item-row');
+
+    items.forEach(item => {
+      const text = item.querySelector('span').textContent;
+      item.innerHTML = `
+        <input type="text" value="${text}">
+        <button class="icon-btn" onclick="deleteListItem(this)">🗑</button>
+      `;
+    });
+  });
+
   button.textContent = 'Save Changes';
   button.className = 'edit-btn save-btn';
   button.onclick = function() { saveProfileEdits(card, profileIndex); };
 }
 
-function saveProfileEdits(card, profileIndex) {
-  const spans = card.querySelectorAll('span[contenteditable="true"]');
-  const profile = profiles[profileIndex];
 
-  const data = {
-    profile_index: profileIndex,
-    name: spans[0].textContent,
-    appearance: spans[1].textContent,
-    background: spans[2].textContent,
-    personality: spans[3].textContent,
-    goal: spans[4].textContent,
-    attitude: spans[5].textContent,
-    benefit: spans[6].textContent,
-    special: spans[7].textContent,
-    successesNeeded: spans[8].textContent,
-    biases: profile.biases.join('; '),
-    strengths: profile.strengths.join('; '),
-    weaknesses: profile.weaknesses.join('; '),
-    influence_skills: profile.influence_skills.join('; ')
-  };
+function enableEditMode(button, profileIndex) {
+  const card = button.parentElement;
+  const spans = card.querySelectorAll('span[contenteditable="false"]');
+  spans.forEach(span => span.contentEditable = true);
 
-  fetch('/api/edit_profile', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
-  }).then(() => {
-    fetchProfiles(); // reload view cleanly
+  const listSections = ['biases', 'strengths', 'weaknesses', 'influence_skills'];
+  listSections.forEach(section => {
+    const listDiv = document.getElementById(`${section}-list`);
+    const items = listDiv.querySelectorAll('.list-item-row');
+
+    items.forEach(item => {
+      const text = item.querySelector('span').textContent;
+      item.innerHTML = `
+        <input type="text" value="${text}">
+        <button class="icon-btn" onclick="deleteListItem(this)">🗑</button>
+      `;
+    });
   });
+
+  button.textContent = 'Save Changes';
+  button.className = 'edit-btn save-btn';
+  button.onclick = function() { saveProfileEdits(card, profileIndex); };
+}
+
+function addListItem(sectionId) {
+  const listDiv = document.getElementById(`${sectionId}-list`);
+  const newItem = document.createElement('div');
+  newItem.className = 'list-item-row';
+  newItem.innerHTML = `<input type="text" placeholder="New Item"><button class="icon-btn" onclick="deleteListItem(this)">🗑</button>`;
+  listDiv.appendChild(newItem);
+}
+
+function deleteListItem(button) {
+  const row = button.parentElement;
+  row.remove();
 }
 
 
