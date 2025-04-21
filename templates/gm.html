@@ -146,6 +146,8 @@ function saveProfileEdits(card, profileIndex) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
+  }).then(() => {
+    fetchProfiles(); // <-- Add this to refresh the page after save
   });
 }
 
