@@ -131,13 +131,20 @@ def create_profile():
     socketio.emit('refresh_profiles')
     return jsonify(success=True)
 
+def parse_list_field(value):
+    if isinstance(value, list):
+        return [item.strip() for item in value if item.strip()]
+    elif isinstance(value, str):
+        return [item.strip() for item in value.split(';') if item.strip()]
+    else:
+        return []
+
 @app.route('/api/edit_profile', methods=['POST'])
 def edit_profile():
     data = request.get_json()
     profile_index = int(data['profile_index'])
     profile = profiles[profile_index]
 
-    # Update basic fields
     profile['name'] = data.get('name', profile.get('name', ''))
     profile['appearance'] = data.get('appearance', profile.get('appearance', ''))
     profile['background'] = data.get('background', profile.get('background', ''))
@@ -148,13 +155,11 @@ def edit_profile():
     profile['special'] = data.get('special', profile.get('special', ''))
     profile['successesNeeded'] = int(data.get('successesNeeded', profile.get('successesNeeded', 1)))
 
-    # Update list fields
-    profile['biases'] = [bias.strip() for bias in data.get('biases', '').split(';') if bias.strip()]
-    profile['strengths'] = [strength.strip() for strength in data.get('strengths', '').split(';') if strength.strip()]
-    profile['weaknesses'] = [weakness.strip() for weakness in data.get('weaknesses', '').split(';') if weakness.strip()]
-    profile['influence_skills'] = [skill.strip() for skill in data.get('influence_skills', '').split(';') if skill.strip()]
+    profile['biases'] = parse_list_field(data.get('biases', ''))
+    profile['strengths'] = parse_list_field(data.get('strengths', ''))
+    profile['weaknesses'] = parse_list_field(data.get('weaknesses', ''))
+    profile['influence_skills'] = parse_list_field(data.get('influence_skills', ''))
 
-    # Rebuild revealed correctly
     if 'revealed' in data:
         profile['revealed'] = {}
         for key in ['biases', 'strengths', 'weaknesses', 'influence_skills']:
@@ -164,12 +169,13 @@ def edit_profile():
                 if idx < len(revealed_list):
                     rebuilt_revealed.append(revealed_list[idx])
                 else:
-                    rebuilt_revealed.append(False)  # Default to not revealed if missing
+                    rebuilt_revealed.append(False)
             profile['revealed'][key] = rebuilt_revealed
 
     save_profiles()
     socketio.emit('refresh_profiles')
     return jsonify(success=True)
+
 
 
 
