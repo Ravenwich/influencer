@@ -134,28 +134,29 @@ def create_profile():
 @app.route('/api/edit_profile', methods=['POST'])
 def edit_profile():
     data = request.get_json()
-    idx = int(data['profile_index'])
-    profile = profiles[idx]
+    profile_index = int(data['profile_index'])
+    profile = profiles[profile_index]
 
-    profile.update({
-        'name': data['name'],
-        'appearance': data['appearance'],
-        'background': data['background'],
-        'personality': data['personality'],
-        'biases': [x.strip() for x in data.get('biases', '').split(';') if x.strip()],
-        'strengths': [x.strip() for x in data.get('strengths', '').split(';') if x.strip()],
-        'weaknesses': [x.strip() for x in data.get('weaknesses', '').split(';') if x.strip()],
-        'influence_skills': [x.strip() for x in data.get('influence_skills', '').split(';') if x.strip()],
-        'goal': data.get('goal', ''),
-        'attitude': data.get('attitude', ''),
-        'benefit': data.get('benefit', ''),
-        'special': data.get('special', ''),
-        'successesNeeded': int(data.get('successesNeeded', profile.get('successesNeeded', 1)))
-    })
+    profile['name'] = data.get('name', profile.get('name', ''))
+    profile['appearance'] = data.get('appearance', profile.get('appearance', ''))
+    profile['background'] = data.get('background', profile.get('background', ''))
+    profile['personality'] = data.get('personality', profile.get('personality', ''))
+
+    profile['biases'] = [bias.strip() for bias in data.get('biases', '').split(';') if bias.strip()]
+    profile['strengths'] = [strength.strip() for strength in data.get('strengths', '').split(';') if strength.strip()]
+    profile['weaknesses'] = [weakness.strip() for weakness in data.get('weaknesses', '').split(';') if weakness.strip()]
+    profile['influence_skills'] = [skill.strip() for skill in data.get('influence_skills', '').split(';') if skill.strip()]
+
+    profile['goal'] = data.get('goal', profile.get('goal', ''))
+    profile['attitude'] = data.get('attitude', profile.get('attitude', ''))
+    profile['benefit'] = data.get('benefit', profile.get('benefit', ''))
+    profile['special'] = data.get('special', profile.get('special', ''))
+    profile['successesNeeded'] = int(data.get('successesNeeded', profile.get('successesNeeded', 0)))
 
     save_profiles()
     socketio.emit('refresh_profiles')
     return jsonify(success=True)
+
 
 @app.route('/api/delete_profile', methods=['POST'])
 def delete_profile():
