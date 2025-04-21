@@ -79,7 +79,7 @@ function renderMain() {
   container.innerHTML = '';
 
   if (selectedProfileIndex === -1) {
-    container.innerHTML = '<div class="profile-card"><h2>Create Profile from sidebar only</h2></div>';
+    renderCreateForm(container);
     return;
   }
 
@@ -129,6 +129,47 @@ function renderMain() {
 
   container.appendChild(div);
 }
+
+function renderCreateForm(container) {
+  const form = document.createElement('div');
+  form.className = 'profile-card';
+  form.innerHTML = `
+    <h2>Create New Profile</h2>
+    <form id="createProfileForm" enctype="multipart/form-data">
+      <input type="text" name="name" placeholder="Name" required><br>
+      <textarea name="appearance" placeholder="Appearance" required></textarea><br>
+      <textarea name="background" placeholder="Background" required></textarea><br>
+      <textarea name="personality" placeholder="Personality" required></textarea><br>
+      <textarea name="goal" placeholder="Goal" required></textarea><br>
+      <textarea name="attitude" placeholder="Attitude" required></textarea><br>
+      <textarea name="benefit" placeholder="Benefit" required></textarea><br>
+      <textarea name="special" placeholder="Special" required></textarea><br>
+      <input type="text" name="biases" placeholder="Biases (semicolon-separated)"><br>
+      <input type="text" name="strengths" placeholder="Strengths (semicolon-separated)"><br>
+      <input type="text" name="weaknesses" placeholder="Weaknesses (semicolon-separated)"><br>
+      <input type="text" name="influence_skills" placeholder="Influence Skills (semicolon-separated)"><br>
+      <input type="number" name="successesNeeded" placeholder="Successes Needed" min="1" value="1"><br>
+      <input type="file" name="photo" accept="image/*"><br><br>
+      <button type="submit" class="edit-btn">Create Profile</button>
+    </form>
+  `;
+  container.appendChild(form);
+
+  document.getElementById('createProfileForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+
+    fetch('/api/create_profile', {
+      method: 'POST',
+      body: formData
+    }).then(() => {
+      e.target.reset();
+      selectedProfileIndex = 0;
+      fetchProfiles();
+    });
+  });
+}
+
 
 function enableEditMode(button, profileIndex) {
   const card = button.parentElement;
