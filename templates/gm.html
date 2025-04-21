@@ -35,6 +35,25 @@ input:checked + .slider:before { transform: translateX(26px); }
 .icon-btn:hover { color: #007bff; }
 .list-item-row { display: flex; align-items: center; margin-bottom: 5px; }
 .list-item-row input[type="text"] { flex: 1; }
+.create-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 20px;
+}
+.create-form textarea, .create-form input[type="text"], .create-form input[type="number"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+.create-form input[type="file"] {
+  grid-column: span 2;
+}
+.create-form button[type="submit"] {
+  grid-column: span 2;
+  width: 100%;
+  margin-top: 10px;
+}
   </style>
 </head>
 <body>
@@ -135,21 +154,21 @@ function renderCreateForm(container) {
   form.className = 'profile-card';
   form.innerHTML = `
     <h2>Create New Profile</h2>
-    <form id="createProfileForm" enctype="multipart/form-data">
-      <input type="text" name="name" placeholder="Name" required><br>
-      <textarea name="appearance" placeholder="Appearance" required></textarea><br>
-      <textarea name="background" placeholder="Background" required></textarea><br>
-      <textarea name="personality" placeholder="Personality" required></textarea><br>
-      <textarea name="goal" placeholder="Goal" required></textarea><br>
-      <textarea name="attitude" placeholder="Attitude" required></textarea><br>
-      <textarea name="benefit" placeholder="Benefit" required></textarea><br>
-      <textarea name="special" placeholder="Special" required></textarea><br>
-      <input type="text" name="biases" placeholder="Biases (semicolon-separated)"><br>
-      <input type="text" name="strengths" placeholder="Strengths (semicolon-separated)"><br>
-      <input type="text" name="weaknesses" placeholder="Weaknesses (semicolon-separated)"><br>
-      <input type="text" name="influence_skills" placeholder="Influence Skills (semicolon-separated)"><br>
-      <input type="number" name="successesNeeded" placeholder="Successes Needed" min="1" value="1"><br>
-      <input type="file" name="photo" accept="image/*"><br><br>
+    <form id="createProfileForm" class="create-form" enctype="multipart/form-data">
+      <input type="text" name="name" placeholder="Name" required>
+      <input type="number" name="successesNeeded" placeholder="Successes Needed" min="1" value="1">
+      <textarea name="appearance" placeholder="Appearance" required></textarea>
+      <textarea name="background" placeholder="Background" required></textarea>
+      <textarea name="personality" placeholder="Personality" required></textarea>
+      <textarea name="goal" placeholder="Goal" required></textarea>
+      <textarea name="attitude" placeholder="Attitude" required></textarea>
+      <textarea name="benefit" placeholder="Benefit" required></textarea>
+      <textarea name="special" placeholder="Special" required></textarea>
+      <input type="text" name="biases" placeholder="Biases (semicolon-separated)">
+      <input type="text" name="strengths" placeholder="Strengths (semicolon-separated)">
+      <input type="text" name="weaknesses" placeholder="Weaknesses (semicolon-separated)">
+      <input type="text" name="influence_skills" placeholder="Influence Skills (semicolon-separated)">
+      <input type="file" name="photo" accept="image/*">
       <button type="submit" class="edit-btn">Create Profile</button>
     </form>
   `;
@@ -169,6 +188,7 @@ function renderCreateForm(container) {
     });
   });
 }
+
 
 
 function enableEditMode(button, profileIndex) {
