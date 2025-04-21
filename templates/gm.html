@@ -234,6 +234,11 @@ function saveProfileEdits(card, profileIndex) {
   const spans = card.querySelectorAll('span[contenteditable="true"]');
   const profile = profiles[profileIndex];
 
+  const biasesData = collectListInputsAndReveals('biases');
+  const strengthsData = collectListInputsAndReveals('strengths');
+  const weaknessesData = collectListInputsAndReveals('weaknesses');
+  const influenceSkillsData = collectListInputsAndReveals('influence_skills');
+
   const data = {
     profile_index: profileIndex,
     name: spans[0]?.textContent ?? '',
@@ -245,10 +250,16 @@ function saveProfileEdits(card, profileIndex) {
     benefit: spans[6]?.textContent ?? '',
     special: spans[7]?.textContent ?? '',
     successesNeeded: document.getElementById('successes-needed-input')?.value ?? profile.successesNeeded,
-    biases: collectListInputs('biases'),
-    strengths: collectListInputs('strengths'),
-    weaknesses: collectListInputs('weaknesses'),
-    influence_skills: collectListInputs('influence_skills')
+    biases: biasesData.items.join('; '),
+    strengths: strengthsData.items.join('; '),
+    weaknesses: weaknessesData.items.join('; '),
+    influence_skills: influenceSkillsData.items.join('; '),
+    revealed: {
+      biases: biasesData.revealed,
+      strengths: strengthsData.revealed,
+      weaknesses: weaknessesData.revealed,
+      influence_skills: influenceSkillsData.revealed
+    }
   };
 
   fetch('/api/edit_profile', {
@@ -260,11 +271,18 @@ function saveProfileEdits(card, profileIndex) {
   });
 }
 
-function collectListInputs(sectionId) {
+
+function collectListInputsAndReveals(sectionId) {
   const section = document.getElementById(`${sectionId}-list`);
   const inputs = section.querySelectorAll('input[type="text"]');
-  return Array.from(inputs).map(input => input.value.trim()).filter(x => x).join('; ');
+  const reveals = section.querySelectorAll('input[type="checkbox"]');
+
+  const items = Array.from(inputs).map(input => input.value.trim()).filter(x => x);
+  const revealed = Array.from(reveals).map(input => input.checked);
+
+  return { items, revealed };
 }
+
 
 function addListItem(sectionId) {
   const listDiv = document.getElementById(`${sectionId}-list`);

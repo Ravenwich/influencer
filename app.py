@@ -151,11 +151,20 @@ def edit_profile():
     profile['attitude'] = data.get('attitude', profile.get('attitude', ''))
     profile['benefit'] = data.get('benefit', profile.get('benefit', ''))
     profile['special'] = data.get('special', profile.get('special', ''))
-    profile['successesNeeded'] = int(data.get('successesNeeded', profile.get('successesNeeded', 0)))
+    profile['successesNeeded'] = int(data.get('successesNeeded', profile.get('successesNeeded', 1)))
+
+    if 'revealed' in data:
+        profile['revealed'] = {
+            'biases': data['revealed'].get('biases', [False] * len(profile.get('biases', []))),
+            'strengths': data['revealed'].get('strengths', [False] * len(profile.get('strengths', []))),
+            'weaknesses': data['revealed'].get('weaknesses', [False] * len(profile.get('weaknesses', []))),
+            'influence_skills': data['revealed'].get('influence_skills', [False] * len(profile.get('influence_skills', [])))
+        }
 
     save_profiles()
     socketio.emit('refresh_profiles')
     return jsonify(success=True)
+
 
 
 @app.route('/api/delete_profile', methods=['POST'])
