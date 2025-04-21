@@ -1,3 +1,5 @@
+<!-- Updated gm.html -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,369 +7,109 @@
   <title>GM Panel - Influence Combat App</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js"></script>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      display: flex;
-      height: 100vh;
-      background: #f0f2f5;
-    }
-    #sidebar {
-      width: 250px;
-      background: #fff;
-      border-right: 1px solid #ddd;
-      overflow-y: auto;
-      padding: 10px;
-    }
-    #main {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      background: #f9f9fb;
-    }
-    h1 {
-      text-align: center;
-      color: #333;
-    }
-    .sidebar-item {
-      padding: 10px;
-      margin-bottom: 5px;
-      background: #eee;
-      border-radius: 5px;
-      cursor: pointer;
-      text-align: center;
-    }
-    .sidebar-item:hover, .sidebar-item.active {
-      background: #007bff;
-      color: white;
-    }
-    .profile-card, .form-card {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      margin: auto;
-      padding: 20px;
-      max-width: 800px;
-    }
-    .form-card input, .form-card textarea {
-      width: 100%;
-      padding: 8px;
-      margin: 8px 0 16px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    .form-card button, .edit-btn, .influence-btn {
-      padding: 10px 20px;
-      margin: 5px 5px 5px 0;
-      background-color: #28a745;
-      border: none;
-      border-radius: 5px;
-      color: white;
-      cursor: pointer;
-      font-size: 14px;
-    }
+    body { font-family: Arial, sans-serif; margin: 0; display: flex; height: 100vh; background: #f0f2f5; }
+    #sidebar { width: 250px; background: #fff; border-right: 1px solid #ddd; overflow-y: auto; padding: 10px; }
+    #main { flex: 1; overflow-y: auto; padding: 20px; background: #f9f9fb; }
+    h1 { text-align: center; color: #333; }
+    .sidebar-item { padding: 10px; margin-bottom: 5px; background: #eee; border-radius: 5px; cursor: pointer; text-align: center; }
+    .sidebar-item:hover, .sidebar-item.active { background: #007bff; color: white; }
+    .profile-card, .form-card { background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin: auto; padding: 20px; max-width: 800px; }
+    .form-card input, .form-card textarea { width: 100%; padding: 8px; margin: 8px 0 16px 0; border: 1px solid #ccc; border-radius: 5px; }
+    .form-card button, .edit-btn, .influence-btn { padding: 10px 20px; margin: 5px 5px 5px 0; background-color: #28a745; border: none; border-radius: 5px; color: white; cursor: pointer; font-size: 14px; }
     .save-btn { background-color: #17a2b8; }
     .cancel-btn { background-color: #ffc107; color: black; }
     .delete-btn { background-color: #dc3545; }
     .reset-btn { background-color: #6c757d; }
     .influence-btn { background-color: #007bff; }
-    img.profile-photo {
-      max-width: 100%;
-      border-radius: 10px;
-      margin-bottom: 10px;
-    }
-    .section-title {
-      font-weight: bold;
-      margin-top: 10px;
-      color: #555;
-    }
-    [contenteditable="true"] {
-      background-color: #eef;
-      border: 1px solid #99f;
-      padding: 4px;
-      border-radius: 4px;
-    }
+    img.profile-photo { max-width: 100%; border-radius: 10px; margin-bottom: 10px; }
+    .section-title { font-weight: bold; margin-top: 10px; color: #555; }
+    [contenteditable="true"] { background-color: #eef; border: 1px solid #99f; padding: 4px; border-radius: 4px; }
     ul { padding-left: 20px; }
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 50px;
-      height: 24px;
-      margin-left: 10px;
-      vertical-align: middle;
-    }
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #dc3545;
-      transition: .4s;
-      border-radius: 34px;
-    }
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 18px;
-      width: 18px;
-      left: 3px;
-      bottom: 3px;
-      background-color: white;
-      transition: .4s;
-      border-radius: 50%;
-    }
-    input:checked + .slider {
-      background-color: #28a745;
-    }
-    input:checked + .slider:before {
-      transform: translateX(26px);
-    }
-    .switch-label {
-      font-size: 12px;
-      margin-left: 5px;
-      vertical-align: middle;
-    }
   </style>
 </head>
 <body>
+<div id="sidebar">
+  <h1>Profiles</h1>
+  <div id="profile-list"></div>
+</div>
+<div id="main">
+  <div id="main-content"></div>
+</div>
+<script>
+var socket = io();
+var profiles = [];
+var selectedProfileIndex = 0;
 
-  <div id="sidebar">
-    <h1>Profiles</h1>
-    <div id="profile-list"></div>
-  </div>
+function fetchProfiles() {
+  fetch('/api/get_profiles').then(r => r.json()).then(data => { profiles = data; renderSidebar(); renderMain(); });
+}
 
-  <div id="main">
-    <div id="main-content"></div>
-  </div>
+function renderSidebar() {
+  const list = document.getElementById('profile-list');
+  list.innerHTML = '';
 
-  <script>
-    var socket = io();
-    var profiles = [];
-    var selectedProfileIndex = 0;
+  const createBtn = document.createElement('div');
+  createBtn.className = 'sidebar-item' + (selectedProfileIndex === -1 ? ' active' : '');
+  createBtn.textContent = '+ Create New';
+  createBtn.onclick = function() { selectedProfileIndex = -1; renderSidebar(); renderMain(); };
+  list.appendChild(createBtn);
 
-    function fetchProfiles() {
-      fetch('/api/get_profiles')
-        .then(response => response.json())
-        .then(data => {
-          profiles = data;
-          renderSidebar();
-          renderMain();
-        });
-    }
+  profiles.forEach((profile, index) => {
+    const item = document.createElement('div');
+    item.className = 'sidebar-item' + (selectedProfileIndex === index ? ' active' : '');
+    item.textContent = profile.name;
+    item.onclick = function() { selectedProfileIndex = index; renderSidebar(); renderMain(); };
+    list.appendChild(item);
+  });
+}
 
-    function renderSidebar() {
-      const list = document.getElementById('profile-list');
-      list.innerHTML = '';
+function renderMain() {
+  const container = document.getElementById('main-content');
+  container.innerHTML = '';
 
-      const createBtn = document.createElement('div');
-      createBtn.className = 'sidebar-item' + (selectedProfileIndex === -1 ? ' active' : '');
-      createBtn.textContent = '+ Create New';
-      createBtn.onclick = function() {
-        selectedProfileIndex = -1;
-        renderSidebar();
-        renderMain();
-      };
-      list.appendChild(createBtn);
+  if (selectedProfileIndex === -1) { container.innerHTML = '<div class="form-card"><h2>Create Profile from sidebar only</h2></div>'; return; }
 
-      profiles.forEach((profile, index) => {
-        const item = document.createElement('div');
-        item.className = 'sidebar-item' + (selectedProfileIndex === index ? ' active' : '');
-        item.textContent = profile.name;
-        item.onclick = function() {
-          selectedProfileIndex = index;
-          renderSidebar();
-          renderMain();
-        };
-        list.appendChild(item);
-      });
-    }
+  const p = profiles[selectedProfileIndex];
+  const div = document.createElement('div');
+  div.className = 'profile-card';
 
-    function renderMain() {
-      const container = document.getElementById('main-content');
-      container.innerHTML = '';
+  if (p.photo_filename) div.innerHTML += `<img src="/static/uploads/${p.photo_filename}" alt="Profile Photo" class="profile-photo">`;
 
-      if (selectedProfileIndex === -1) {
-        renderCreateForm(container);
-        return;
-      }
+  div.innerHTML += `<h2>${p.name}</h2>`;
+  div.innerHTML += `<p><strong>Influence Successes:</strong> ${p.influence_successes}</p>`;
 
-      const profile = profiles[selectedProfileIndex];
-      const div = document.createElement('div');
-      div.className = 'profile-card';
+  ['appearance','background','personality','goal','attitude','benefit','special'].forEach(field => {
+    div.innerHTML += `<p><strong>${field.charAt(0).toUpperCase() + field.slice(1)}:</strong> ${p[field] || ''}</p>`;
+  });
 
-      if (profile.photo_filename) {
-        div.innerHTML += `<img src="/static/uploads/${profile.photo_filename}" alt="Profile Photo" class="profile-photo">`;
-      }
+  div.innerHTML += `<p><strong>Successes Needed:</strong> ${p.successesNeeded ?? ''}</p>`;
 
-      div.innerHTML += `
-        <h2><span contenteditable="false">${profile.name}</span></h2>
-        <button class="edit-btn" onclick="enableEditMode(this, ${selectedProfileIndex})">Edit</button>
-        <button class="edit-btn delete-btn" onclick="deleteProfile(${selectedProfileIndex})">Delete</button>
-        <p><span class="section-title">Influence Successes:</span> ${profile.influence_successes}
-          <button class="influence-btn" onclick="incrementSuccess(${selectedProfileIndex})">+1</button>
-          <button class="influence-btn reset-btn" onclick="resetSuccess(${selectedProfileIndex})">Reset</button>
-        </p>
-      `;
-
-      ['appearance', 'background', 'personality'].forEach((field, idx) => {
-        div.innerHTML += `
-          <p><strong>${field.charAt(0).toUpperCase() + field.slice(1)}:</strong> 
-          <span contenteditable="false">${profile[field]}</span></p>
-        `;
-      });
-
-      ['biases', 'strengths', 'weaknesses', 'influence_skills'].forEach(category => {
-        div.innerHTML += `<p class="section-title">${category.replace('_', ' ').toUpperCase()}:</p><ul>`;
-        profile[category].forEach((item, idx) => {
-          const revealed = profile.revealed[category][idx];
-          div.innerHTML += `
-            <li>
-              ${item}
-              <label class="switch">
-                <input type="checkbox"
-                  ${revealed ? 'checked' : ''}
-                  onchange="handleToggleReveal(this)"
-                  data-profile-index="${selectedProfileIndex}"
-                  data-category="${category}"
-                  data-item-index="${idx}">
-                <span class="slider"></span>
-              </label>
-              <span class="switch-label">${revealed ? 'Revealed' : 'Hidden'}</span>
-            </li>
-          `;
-        });
-        div.innerHTML += `</ul>`;
-      });
-
-      container.appendChild(div);
-    }
-
-    function renderCreateForm(container) {
-      const form = document.createElement('div');
-      form.className = 'form-card';
-      form.innerHTML = `
-        <h2>Create New Profile</h2>
-        <form id="createProfileForm" enctype="multipart/form-data">
-          <input type="text" name="name" placeholder="Name" required>
-          <textarea name="appearance" placeholder="Appearance" required></textarea>
-          <textarea name="background" placeholder="Background" required></textarea>
-          <textarea name="personality" placeholder="Personality" required></textarea>
-          <input type="text" name="biases" placeholder="Biases (comma-separated)">
-          <input type="text" name="strengths" placeholder="Strengths (comma-separated)">
-          <input type="text" name="weaknesses" placeholder="Weaknesses (comma-separated)">
-          <input type="text" name="influence_skills" placeholder="Influence Skills (comma-separated)">
-          <input type="file" name="photo" accept="image/*">
-          <button type="submit">Create Profile</button>
-        </form>
-      `;
-      container.appendChild(form);
-
-      document.getElementById('createProfileForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-
-        fetch('/api/create_profile', {
-          method: 'POST',
-          body: formData
-        });
-
-        e.target.reset();
-        selectedProfileIndex = 0;
-      });
-    }
-
-    function enableEditMode(button, profileIndex) {
-      const card = button.parentElement;
-      const spans = card.querySelectorAll('span[contenteditable="false"]');
-      spans.forEach(span => span.contentEditable = true);
-
-      button.textContent = 'Save Changes';
-      button.className = 'edit-btn save-btn';
-      button.onclick = function() { saveProfileEdits(card, profileIndex); };
-    }
-
-    function saveProfileEdits(card, profileIndex) {
-      const spans = card.querySelectorAll('span[contenteditable="true"]');
-      const data = {
-        profile_index: profileIndex,
-        name: spans[0].textContent,
-        appearance: spans[1].textContent,
-        background: spans[2].textContent,
-        personality: spans[3].textContent,
-        biases: spans[4].textContent,
-        strengths: spans[5].textContent,
-        weaknesses: spans[6].textContent,
-        influence_skills: spans[7].textContent
-      };
-
-      fetch('/api/edit_profile', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-    }
-
-    function incrementSuccess(index) {
-      fetch('/api/increment_success', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ profile_index: index })
-      });
-    }
-
-    function resetSuccess(index) {
-      fetch('/api/reset_success', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ profile_index: index })
-      });
-    }
-
-    function deleteProfile(index) {
-      if (confirm("Are you sure you want to delete this profile?")) {
-        fetch('/api/delete_profile', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ profile_index: index })
-        });
-      }
-    }
-
-    function handleToggleReveal(input) {
-      const profileIndex = input.getAttribute('data-profile-index');
-      const category = input.getAttribute('data-category');
-      const itemIndex = input.getAttribute('data-item-index');
-      const label = input.parentElement.nextElementSibling;
-
-      if (input.checked) {
-        label.textContent = 'Revealed';
-      } else {
-        label.textContent = 'Hidden';
-      }
-
-      fetch('/api/toggle_reveal', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          profile_index: profileIndex,
-          category: category,
-          item_index: itemIndex
-        })
-      });
-    }
-
-    socket.on('refresh_profiles', function () {
-      fetchProfiles();
+  ['biases', 'strengths', 'weaknesses', 'influence_skills'].forEach(cat => {
+    div.innerHTML += `<p class="section-title">${cat.replace('_', ' ').toUpperCase()}:</p><ul>`;
+    p[cat].forEach((item, idx) => {
+      const revealed = p.revealed[cat][idx];
+      div.innerHTML += `<li>${item} <label class="switch"><input type="checkbox" ${revealed ? 'checked' : ''} onchange="handleToggleReveal(this)" data-profile-index="${selectedProfileIndex}" data-category="${cat}" data-item-index="${idx}"><span class="slider"></span></label> ${revealed ? 'Revealed' : 'Hidden'}</li>`;
     });
+    div.innerHTML += `</ul>`;
+  });
 
-    fetchProfiles();
-  </script>
+  container.appendChild(div);
+}
+
+function handleToggleReveal(input) {
+  const profileIndex = input.getAttribute('data-profile-index');
+  const category = input.getAttribute('data-category');
+  const itemIndex = input.getAttribute('data-item-index');
+
+  fetch('/api/toggle_reveal', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ profile_index: profileIndex, category: category, item_index: itemIndex })
+  });
+}
+
+socket.on('refresh_profiles', fetchProfiles);
+fetchProfiles();
+</script>
 </body>
 </html>
