@@ -141,40 +141,46 @@ def parse_list_field(value):
 
 @app.route('/api/edit_profile', methods=['POST'])
 def edit_profile():
-    data = request.get_json()
-    profile_index = int(data['profile_index'])
-    profile = profiles[profile_index]
+    try:
+        data = request.get_json()
+        profile_index = int(data['profile_index'])
+        profile = profiles[profile_index]
 
-    profile['name'] = data.get('name', profile.get('name', ''))
-    profile['appearance'] = data.get('appearance', profile.get('appearance', ''))
-    profile['background'] = data.get('background', profile.get('background', ''))
-    profile['personality'] = data.get('personality', profile.get('personality', ''))
-    profile['goal'] = data.get('goal', profile.get('goal', ''))
-    profile['attitude'] = data.get('attitude', profile.get('attitude', ''))
-    profile['benefit'] = data.get('benefit', profile.get('benefit', ''))
-    profile['special'] = data.get('special', profile.get('special', ''))
-    profile['successesNeeded'] = int(data.get('successesNeeded', profile.get('successesNeeded', 1)))
+        profile['name'] = data.get('name', profile.get('name', ''))
+        profile['appearance'] = data.get('appearance', profile.get('appearance', ''))
+        profile['background'] = data.get('background', profile.get('background', ''))
+        profile['personality'] = data.get('personality', profile.get('personality', ''))
+        profile['goal'] = data.get('goal', profile.get('goal', ''))
+        profile['attitude'] = data.get('attitude', profile.get('attitude', ''))
+        profile['benefit'] = data.get('benefit', profile.get('benefit', ''))
+        profile['special'] = data.get('special', profile.get('special', ''))
+        profile['successesNeeded'] = int(data.get('successesNeeded', profile.get('successesNeeded', 1)))
+        profile['influence_successes'] = int(data.get('influence_successes', profile.get('influence_successes', 0)))
 
-    profile['biases'] = parse_list_field(data.get('biases', ''))
-    profile['strengths'] = parse_list_field(data.get('strengths', ''))
-    profile['weaknesses'] = parse_list_field(data.get('weaknesses', ''))
-    profile['influence_skills'] = parse_list_field(data.get('influence_skills', ''))
 
-    if 'revealed' in data:
-        profile['revealed'] = {}
-        for key in ['biases', 'strengths', 'weaknesses', 'influence_skills']:
-            revealed_list = data['revealed'].get(key, [])
-            rebuilt_revealed = []
-            for idx in range(len(profile.get(key, []))):
-                if idx < len(revealed_list):
-                    rebuilt_revealed.append(revealed_list[idx])
-                else:
-                    rebuilt_revealed.append(False)
-            profile['revealed'][key] = rebuilt_revealed
+        profile['biases'] = parse_list_field(data.get('biases', ''))
+        profile['strengths'] = parse_list_field(data.get('strengths', ''))
+        profile['weaknesses'] = parse_list_field(data.get('weaknesses', ''))
+        profile['influence_skills'] = parse_list_field(data.get('influence_skills', ''))
 
-    save_profiles()
-    socketio.emit('refresh_profiles')
-    return jsonify(success=True)
+        if 'revealed' in data:
+            profile['revealed'] = {}
+            for key in ['biases', 'strengths', 'weaknesses', 'influence_skills']:
+                revealed_list = data['revealed'].get(key, [])
+                rebuilt_revealed = []
+                for idx in range(len(profile.get(key, []))):
+                    if idx < len(revealed_list):
+                        rebuilt_revealed.append(revealed_list[idx])
+                    else:
+                        rebuilt_revealed.append(False)
+                profile['revealed'][key] = rebuilt_revealed
+
+        save_profiles()
+        socketio.emit('refresh_profiles')
+        return jsonify(success=True)
+    except Exception as e:
+        print("Error editing profile:", e)
+        return jsonify(success=False), 500
 
 
 
