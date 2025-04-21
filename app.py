@@ -137,33 +137,40 @@ def edit_profile():
     profile_index = int(data['profile_index'])
     profile = profiles[profile_index]
 
+    # Update basic fields
     profile['name'] = data.get('name', profile.get('name', ''))
     profile['appearance'] = data.get('appearance', profile.get('appearance', ''))
     profile['background'] = data.get('background', profile.get('background', ''))
     profile['personality'] = data.get('personality', profile.get('personality', ''))
-
-    profile['biases'] = [bias.strip() for bias in data.get('biases', '').split(';') if bias.strip()]
-    profile['strengths'] = [strength.strip() for strength in data.get('strengths', '').split(';') if strength.strip()]
-    profile['weaknesses'] = [weakness.strip() for weakness in data.get('weaknesses', '').split(';') if weakness.strip()]
-    profile['influence_skills'] = [skill.strip() for skill in data.get('influence_skills', '').split(';') if skill.strip()]
-
     profile['goal'] = data.get('goal', profile.get('goal', ''))
     profile['attitude'] = data.get('attitude', profile.get('attitude', ''))
     profile['benefit'] = data.get('benefit', profile.get('benefit', ''))
     profile['special'] = data.get('special', profile.get('special', ''))
     profile['successesNeeded'] = int(data.get('successesNeeded', profile.get('successesNeeded', 1)))
 
+    # Update list fields
+    profile['biases'] = [bias.strip() for bias in data.get('biases', '').split(';') if bias.strip()]
+    profile['strengths'] = [strength.strip() for strength in data.get('strengths', '').split(';') if strength.strip()]
+    profile['weaknesses'] = [weakness.strip() for weakness in data.get('weaknesses', '').split(';') if weakness.strip()]
+    profile['influence_skills'] = [skill.strip() for skill in data.get('influence_skills', '').split(';') if skill.strip()]
+
+    # Rebuild revealed correctly
     if 'revealed' in data:
-        profile['revealed'] = {
-            'biases': data['revealed'].get('biases', [False] * len(profile.get('biases', []))),
-            'strengths': data['revealed'].get('strengths', [False] * len(profile.get('strengths', []))),
-            'weaknesses': data['revealed'].get('weaknesses', [False] * len(profile.get('weaknesses', []))),
-            'influence_skills': data['revealed'].get('influence_skills', [False] * len(profile.get('influence_skills', [])))
-        }
+        profile['revealed'] = {}
+        for key in ['biases', 'strengths', 'weaknesses', 'influence_skills']:
+            revealed_list = data['revealed'].get(key, [])
+            rebuilt_revealed = []
+            for idx in range(len(profile.get(key, []))):
+                if idx < len(revealed_list):
+                    rebuilt_revealed.append(revealed_list[idx])
+                else:
+                    rebuilt_revealed.append(False)  # Default to not revealed if missing
+            profile['revealed'][key] = rebuilt_revealed
 
     save_profiles()
     socketio.emit('refresh_profiles')
     return jsonify(success=True)
+
 
 
 
