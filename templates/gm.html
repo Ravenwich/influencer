@@ -231,40 +231,47 @@ function enableEditMode(button, profileIndex) {
 }
 
 function saveProfileEdits(card, profileIndex) {
-const successesInput = document.getElementById('successes-needed-input');
-const successesNeededValue = successesInput ? parseInt(successesInput.value.trim()) : profile.successesNeeded;
+  const spans = card.querySelectorAll('span[contenteditable="true"]');
+  const profile = profiles[profileIndex];
 
-const biasesList = biasesData.items.filter(x => x.trim() !== '');
-const strengthsList = strengthsData.items.filter(x => x.trim() !== '');
-const weaknessesList = weaknessesData.items.filter(x => x.trim() !== '');
-const influenceSkillsList = influenceSkillsData.items.filter(x => x.trim() !== '');
+  const biasesData = collectListInputsAndReveals('biases');
+  const strengthsData = collectListInputsAndReveals('strengths');
+  const weaknessesData = collectListInputsAndReveals('weaknesses');
+  const influenceSkillsData = collectListInputsAndReveals('influence_skills');
 
-const data = {
-  profile_index: profileIndex,
-  name: spans[0]?.textContent ?? '',
-  appearance: spans[1]?.textContent ?? '',
-  background: spans[2]?.textContent ?? '',
-  personality: spans[3]?.textContent ?? '',
-  goal: spans[4]?.textContent ?? '',
-  attitude: spans[5]?.textContent ?? '',
-  benefit: spans[6]?.textContent ?? '',
-  special: spans[7]?.textContent ?? '',
-  successesNeeded: isNaN(successesNeededValue) ? 1 : successesNeededValue,
-  influence_successes: parseInt(document.getElementById('influence-successes')?.textContent.trim()) || 0,
-  biases: biasesList.join('; '),
-  strengths: strengthsList.join('; '),
-  weaknesses: weaknessesList.join('; '),
-  influence_skills: influenceSkillsList.join('; '),
-  revealed: {
-    biases: Array.isArray(biasesData.revealed) ? biasesData.revealed : [],
-    strengths: Array.isArray(strengthsData.revealed) ? strengthsData.revealed : [],
-    weaknesses: Array.isArray(weaknessesData.revealed) ? weaknessesData.revealed : [],
-    influence_skills: Array.isArray(influenceSkillsData.revealed) ? influenceSkillsData.revealed : []
-  }
-};
+  const successesInput = document.getElementById('successes-needed-input');
+  const successesNeededValue = successesInput ? parseInt(successesInput.value.trim()) : profile.successesNeeded;
 
-console.log('Sending profile edit:', data);
+  const biasesList = biasesData.items.filter(x => x.trim() !== '');
+  const strengthsList = strengthsData.items.filter(x => x.trim() !== '');
+  const weaknessesList = weaknessesData.items.filter(x => x.trim() !== '');
+  const influenceSkillsList = influenceSkillsData.items.filter(x => x.trim() !== '');
 
+  const data = {
+    profile_index: profileIndex,
+    name: spans[0]?.textContent ?? '',
+    appearance: spans[1]?.textContent ?? '',
+    background: spans[2]?.textContent ?? '',
+    personality: spans[3]?.textContent ?? '',
+    goal: spans[4]?.textContent ?? '',
+    attitude: spans[5]?.textContent ?? '',
+    benefit: spans[6]?.textContent ?? '',
+    special: spans[7]?.textContent ?? '',
+    successesNeeded: isNaN(successesNeededValue) ? 1 : successesNeededValue,
+    influence_successes: parseInt(document.getElementById('influence-successes')?.textContent.trim()) || 0,
+    biases: biasesList.join('; '),
+    strengths: strengthsList.join('; '),
+    weaknesses: weaknessesList.join('; '),
+    influence_skills: influenceSkillsList.join('; '),
+    revealed: {
+      biases: Array.isArray(biasesData.revealed) ? biasesData.revealed : [],
+      strengths: Array.isArray(strengthsData.revealed) ? strengthsData.revealed : [],
+      weaknesses: Array.isArray(weaknessesData.revealed) ? weaknessesData.revealed : [],
+      influence_skills: Array.isArray(influenceSkillsData.revealed) ? influenceSkillsData.revealed : []
+    }
+  };
+
+  console.log("Sending profile edit:", data);
 
   fetch('/api/edit_profile', {
     method: 'POST',
@@ -274,6 +281,7 @@ console.log('Sending profile edit:', data);
     fetchProfiles();
   });
 }
+
 
 
 function collectListInputsAndReveals(sectionId) {
