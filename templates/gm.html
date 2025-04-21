@@ -1,4 +1,4 @@
-<!-- Final fixed gm.html with everything working properly -->
+<!-- FINAL FULL gm.html FILE -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -34,8 +34,8 @@ input:checked + .slider:before { transform: translateX(26px); }
 .icon-btn { background: none; border: none; cursor: pointer; font-size: 18px; margin-left: 5px; }
 .icon-btn:hover { color: #007bff; }
 .list-item-row { display: flex; align-items: center; margin-bottom: 5px; }
-.list-item-row input[type=\"text\"] { flex: 1; }
-</style>
+.list-item-row input[type="text"] { flex: 1; }
+  </style>
 </head>
 <body>
 <div id="sidebar">
@@ -95,12 +95,15 @@ function renderMain() {
     <h2><span contenteditable="false">${p.name}</span></h2>
     <button class="edit-btn" onclick="enableEditMode(this, ${selectedProfileIndex})">Edit</button>
     <button class="edit-btn delete-btn" onclick="deleteProfile(${selectedProfileIndex})">Delete</button>
-    <p><strong>Influence Successes:</strong> ${p.influence_successes} / ${p.successesNeeded}
-      <button class="influence-btn" onclick="incrementSuccess(${selectedProfileIndex})">+1</button>
-      <button class="influence-btn reset-btn" onclick="resetSuccess(${selectedProfileIndex})">Reset</button>
-    </p>`;
+    <p><strong>Influence Successes:</strong> 
+    <span id="influence-successes">${p.influence_successes}</span> / 
+    <span id="successes-needed" contenteditable="false">${p.successesNeeded ?? ''}</span>
+    <button class="influence-btn" onclick="incrementSuccess(${selectedProfileIndex})">+1</button>
+    <button class="influence-btn reset-btn" onclick="resetSuccess(${selectedProfileIndex})">Reset</button>
+    </p>
+  `;
 
-  ['appearance','background','personality','goal','attitude','benefit','special'].forEach(field => {
+  ['appearance', 'background', 'personality', 'goal', 'attitude', 'benefit', 'special'].forEach(field => {
     div.innerHTML += `<p><strong>${field.charAt(0).toUpperCase() + field.slice(1)}:</strong> <span contenteditable="false">${p[field] || ''}</span></p>`;
   });
 
@@ -110,19 +113,22 @@ function renderMain() {
     p[cat].forEach((item, idx) => {
       const revealed = p.revealed[cat][idx];
       div.innerHTML += `
-  <p><strong>Influence Successes:</strong> 
-  <span id="influence-successes">${p.influence_successes}</span> / 
-  <span id="successes-needed" contenteditable="false">${p.successesNeeded ?? ''}</span>
-  <button class="influence-btn" onclick="incrementSuccess(${selectedProfileIndex})">+1</button>
-  <button class="influence-btn reset-btn" onclick="resetSuccess(${selectedProfileIndex})">Reset</button>
-  </p>
-`;
+        <div class="list-item-row">
+          <span contenteditable="false">${item}</span>
+          <label class="switch">
+            <input type="checkbox" ${revealed ? 'checked' : ''} onchange="handleToggleReveal(this)" data-profile-index="${selectedProfileIndex}" data-category="${cat}" data-item-index="${idx}">
+            <span class="slider"></span>
+          </label>
+          <span class="switch-label">${revealed ? 'Revealed' : 'Hidden'}</span>
+        </div>
+      `;
     });
+
+    div.innerHTML += `</div>`;
   });
 
   container.appendChild(div);
 }
-
 
 function enableEditMode(button, profileIndex) {
   const card = button.parentElement;
@@ -132,7 +138,6 @@ function enableEditMode(button, profileIndex) {
   const successesNeededSpan = document.getElementById('successes-needed');
   const currentValue = successesNeededSpan.textContent.trim();
   successesNeededSpan.outerHTML = `<input id="successes-needed-input" type="number" value="${currentValue}" style="width: 50px;">`;
-
 
   const listSections = ['biases', 'strengths', 'weaknesses', 'influence_skills'];
   listSections.forEach(section => {
@@ -194,7 +199,6 @@ function saveProfileEdits(card, profileIndex) {
   });
 }
 
-
 function collectListInputs(sectionId) {
   const section = document.getElementById(`${sectionId}-list`);
   const inputs = section.querySelectorAll('input[type="text"]');
@@ -221,8 +225,6 @@ function deleteListItem(button) {
   row.remove();
 }
 
-
-
 function handleToggleReveal(input) {
   const profileIndex = input.getAttribute('data-profile-index');
   const category = input.getAttribute('data-category');
@@ -238,7 +240,7 @@ function handleToggleReveal(input) {
 function incrementSuccess(index) {
   fetch('/api/increment_success', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({ profile_index: index })
   });
 }
@@ -246,7 +248,7 @@ function incrementSuccess(index) {
 function resetSuccess(index) {
   fetch('/api/reset_success', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({ profile_index: index })
   });
 }
@@ -255,7 +257,7 @@ function deleteProfile(index) {
   if (confirm("Are you sure you want to delete this profile?")) {
     fetch('/api/delete_profile', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ profile_index: index })
     });
   }
