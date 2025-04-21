@@ -274,14 +274,27 @@ function saveProfileEdits(card, profileIndex) {
 
 function collectListInputsAndReveals(sectionId) {
   const section = document.getElementById(`${sectionId}-list`);
-  const inputs = section.querySelectorAll('input[type="text"]');
-  const reveals = section.querySelectorAll('input[type="checkbox"]');
+  const rows = section.querySelectorAll('.list-item-row');
 
-  const items = Array.from(inputs).map(input => input.value.trim()).filter(x => x);
-  const revealed = Array.from(reveals).map(input => input.checked);
+  const items = [];
+  const revealed = [];
+
+  rows.forEach(row => {
+    const textInput = row.querySelector('input[type="text"]');
+    const revealInput = row.querySelector('input[type="checkbox"]');
+
+    if (textInput) {
+      items.push(textInput.value.trim());
+    }
+
+    if (revealInput) {
+      revealed.push(revealInput.checked);
+    }
+  });
 
   return { items, revealed };
 }
+
 
 
 function addListItem(sectionId) {
