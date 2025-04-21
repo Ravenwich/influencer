@@ -129,6 +129,8 @@ function enableEditMode(button, profileIndex) {
 
 function saveProfileEdits(card, profileIndex) {
   const spans = card.querySelectorAll('span[contenteditable="true"]');
+  const profile = profiles[profileIndex];
+
   const data = {
     profile_index: profileIndex,
     name: spans[0].textContent,
@@ -139,7 +141,11 @@ function saveProfileEdits(card, profileIndex) {
     attitude: spans[5].textContent,
     benefit: spans[6].textContent,
     special: spans[7].textContent,
-    successesNeeded: spans[8].textContent
+    successesNeeded: spans[8].textContent,
+    biases: profile.biases.join('; '),
+    strengths: profile.strengths.join('; '),
+    weaknesses: profile.weaknesses.join('; '),
+    influence_skills: profile.influence_skills.join('; ')
   };
 
   fetch('/api/edit_profile', {
@@ -147,9 +153,10 @@ function saveProfileEdits(card, profileIndex) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
   }).then(() => {
-    fetchProfiles(); // <-- Add this to refresh the page after save
+    fetchProfiles(); // reload view cleanly
   });
 }
+
 
 function handleToggleReveal(input) {
   const profileIndex = input.getAttribute('data-profile-index');
