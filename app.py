@@ -157,38 +157,29 @@ def create_profile():
 def edit_profile():
     try:
         data = request.get_json()
-        profile = profiles[int(data['profile_index'])]
+        profile_index = int(data['profile_index'])
+        profile = profiles[profile_index]
 
         # Update simple fields
         for field in ['name', 'appearance', 'background', 'personality', 'goal', 'attitude', 'benefit', 'special']:
             if field in data:
-                setattr(profile, field, data[field])
+                profile[field] = data[field]
 
         if 'successesNeeded' in data:
-            profile.successesNeeded = int(data['successesNeeded'])
+            profile['successesNeeded'] = int(data['successesNeeded'])
 
         if 'influence_successes' in data:
-            profile.influence_successes = int(data['influence_successes'])
+            profile['influence_successes'] = int(data['influence_successes'])
 
-        # Update list fields
+        # Update lists cleanly
         for field in ['biases', 'strengths', 'weaknesses', 'influence_skills']:
-            if field in data:
-                incoming = data[field]
-                profile_list = [x.strip() for x in incoming.split(';') if x.strip()]
-                profile_list = profile_list if isinstance(profile_list, list) else []
-                setattr(profile, field, profile_list)
-
-        # Update revealed structure
-        if 'revealed' in data:
-            for category in ['biases', 'strengths', 'weaknesses', 'influence_skills']:
-                revealed_array = data['revealed'].get(category, [])
-                rebuilt = []
-                for i in range(len(getattr(profile, category))):
-                    if i < len(revealed_array):
-                        rebuilt.append(revealed_array[i])
-                    else:
-                        rebuilt.append(False)
-                profile.revealed[category] = rebuilt
+            new_items = data.get(field, [])
+            revealed_data = data.get('revealed', {}).get(field, [])
+            profile[field] = new_items
+            profile['revealed'][field] = [
+                revealed_data[idx] if idx < len(revealed_data) else False
+                for idx in range(len(new_items))
+            ]
 
         save_profiles()
         socketio.emit('refresh_profiles')
@@ -196,6 +187,8 @@ def edit_profile():
     except Exception as e:
         print(f"Error editing profile: {e}")
         return jsonify(success=False), 500
+
+
 
 @app.route('/api/delete_profile', methods=['POST'])
 def delete_profile():

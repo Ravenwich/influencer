@@ -199,15 +199,15 @@ function saveProfileEdits(card, profileIndex) {
     special: spans[7]?.innerText.trim(),
     successesNeeded: parseInt(inputSuccesses.value.trim()) || 1,
     influence_successes: parseInt(document.getElementById('influence-successes').innerText.trim()) || 0,
-    biases: biasesData.items.join('; '),
-    strengths: strengthsData.items.join('; '),
-    weaknesses: weaknessesData.items.join('; '),
-    influence_skills: influenceSkillsData.items.join('; '),
+    biases: biasesData.items,
+    strengths: strengthsData.items,
+    weaknesses: weaknessesData.items,
+    influence_skills: influenceSkillsData.items,
     revealed: {
-      biases: Array.isArray(biasesData.revealed) ? biasesData.revealed : [],
-      strengths: Array.isArray(strengthsData.revealed) ? strengthsData.revealed : [],
-      weaknesses: Array.isArray(weaknessesData.revealed) ? weaknessesData.revealed : [],
-      influence_skills: Array.isArray(influenceSkillsData.revealed) ? influenceSkillsData.revealed : []
+      biases: biasesData.revealed,
+      strengths: strengthsData.revealed,
+      weaknesses: weaknessesData.revealed,
+      influence_skills: influenceSkillsData.revealed
     }
   };
 
