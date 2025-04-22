@@ -1,18 +1,19 @@
 [
   {
-    "name": "Captain Elira",
+    "name": "Captain Eliraf",
     "appearance": "A tall woman with sharp green eyes, wearing a long military coat adorned with medals.",
     "background": "Once a respected officer, now a rogue agent operating outside the chain of command.s",
     "personality": "Cunning and methodical, but still retains a surprising sense of humors.",
+    "attitude": "Fun",
     "goal": "To dismantle the corrupt hierarchy that betrayed her, piece by piece.",
     "benefit": "Can call in favors from old contacts within the military.",
     "special": "Possesses classified knowledge of secret operations.",
-    "influence_successes": 2,
+    "influence_successes": 0,
     "successes_needed": 4,
     "biases": [
       {
         "text": "Distrusts anyone in uniforms.",
-        "revealed": false
+        "revealed": true
       },
       {
         "text": "Respects cleverness over authority.",
@@ -49,13 +50,14 @@
         "revealed": true
       }
     ],
-    "photo": "wizard2.png"
+    "photo": "ratiocone.png"
   },
   {
     "name": "Scholar Veyra",
     "appearance": "A slender figure wrapped in layers of flowing robes, carrying an ancient tome.",
     "background": "Born into a secretive academic order, Veyra seeks forbidden knowledge to protect it from misuse.",
     "personality": "Quietly intense, obsessed with uncovering hidden truths.",
+    "attitude": "",
     "goal": "Unlock the secrets of a lost civilization before rival scholars get there first.",
     "benefit": "Knows the locations of several undiscovered ruins.",
     "special": "Can decipher ancient languages at a glance.",
@@ -96,6 +98,7 @@
     "appearance": "Bartelby is tall, thin, and handsome, with thick hair and expressive eyes.",
     "background": "Steward of the Palace of Birdsong.",
     "personality": "Bartelby is aloof, obsessive, and loyal to those he cares about. He is arrogant and charismatic in  equal measure. He\u2019s exactly as courteous to others and the help as etiquette demands.",
+    "attitude": "",
     "goal": "Bartelby wants to maintain a tight grip on Meratt.",
     "benefit": "Cool stuff",
     "special": "He's not a vammpire",
@@ -134,6 +137,43 @@
       },
       {
         "text": "Diplomacy",
+        "revealed": false
+      }
+    ],
+    "photo": "default.png"
+  },
+  {
+    "name": "",
+    "appearance": "",
+    "background": "",
+    "personality": "",
+    "attitude": "",
+    "goal": "",
+    "benefit": "",
+    "special": "",
+    "influence_successes": 0,
+    "successes_needed": 1,
+    "biases": [
+      {
+        "text": "",
+        "revealed": false
+      }
+    ],
+    "strengths": [
+      {
+        "text": "",
+        "revealed": false
+      }
+    ],
+    "weaknesses": [
+      {
+        "text": "",
+        "revealed": false
+      }
+    ],
+    "influence_skills": [
+      {
+        "text": "",
         "revealed": false
       }
     ],

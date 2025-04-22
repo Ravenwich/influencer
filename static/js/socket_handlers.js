@@ -8,6 +8,15 @@ let selectedIndex = 0;
 
 const socket = io();
 
+// map plural section titles to their singular form
+const singularMap = {
+    'Biases': 'Bias',
+    'Strengths': 'Strength',
+    'Weaknesses': 'Weakness',
+    'Influence Skills': 'Influence Skill'
+  };
+  
+
 // Live update handler
 socket.on('profiles_updated', (newProfiles) => {
     profiles = newProfiles;
@@ -128,8 +137,13 @@ function renderView(profile, idx, gretchenMode) {
       ? '/' + profile.successes_needed 
       : ''}</span>
   ${gretchenMode ? `
-    <button class="edit" onclick="incrementInfluence(${idx})">+1</button>
-    <button class="delete" onclick="resetInfluence(${idx})">↺</button>
+    <button class="edit" onclick="incrementInfluence(${idx})">
+  <i class="fa-solid fa-heart-circle-plus"></i> +1
+</button>
+<button class="delete" onclick="resetInfluence(${idx})">
+  <i class="fa-solid fa-arrow-rotate-left"></i> Reset
+</button>
+
   ` : ''}
 </div>
 
@@ -144,8 +158,13 @@ function renderView(profile, idx, gretchenMode) {
     if (gretchenMode && editingIndex !== idx) {
         html += `
       <div style="padding:24px; text-align:right;">
-        <button class="edit" onclick="startEditProfile(${idx})">✏️ Edit</button>
-        <button class="delete" onclick="deleteProfile(${idx})">🗑️ Delete</button>
+        <button class="edit" onclick="startEditProfile(${idx})">
+  <i class="fa-solid fa-pen-nib"></i>Edit
+</button>
+<button class="delete" onclick="deleteProfile(${idx})">
+  <i class="fa-solid fa-x"></i> Delete
+</button>
+
       </div>
     `;
     }
@@ -173,9 +192,15 @@ function renderList(label, items, profileIdx, gretchenMode) {
               <button onclick="removeListItem(${profileIdx}, '${category}', ${i})">✖️</button>
             </li>`;
         });
-        html += `<li>
-          <button onclick="addListItem(${profileIdx}, '${category}')">➕ Add ${label.slice(0, -1)}</button>
+        const singular = singularMap[label] || label.replace(/s$/, '');
+        html += `
+        <li>
+          <button class="add" onclick="addListItem(${profileIdx}, '${category}')">
+  <i class="fa-solid fa-plus"></i>Add ${singular}
+</button>
+
         </li>`;
+    
 
     } else if (gretchenMode) {
         items.forEach((item, i) => {
@@ -251,31 +276,76 @@ function addListItem(profileIdx, category) {
   }
   
 
-// Edit form (wrapper)
-function renderEditForm(p, idx) {
+  function renderEditForm(p, idx) {
     return `
-    <h2>Editing: ${p.name || 'New Profile'}</h2>
-    ${fieldInput("Name", "name", p.name)}
-    ${fieldInput("Appearance", "appearance", p.appearance, true)}
-    ${fieldInput("Background", "background", p.background, true)}
-    ${fieldInput("Personality", "personality", p.personality, true)}
-    ${fieldInput("Attitude", "attitude", p.attitude, true)}
-    ${fieldInput("Goal", "goal", p.goal, true)}
-    ${fieldInput("Benefit", "benefit", p.benefit, true)}
-    ${fieldInput("Special", "special", p.special, true)}
-    ${fieldInput("Influence Successes", "influence_successes", p.influence_successes)}
-    ${fieldInput("Successes Needed", "successes_needed", p.successes_needed)}
-    ${renderList("Biases", p.biases, idx, true)}
-    ${renderList("Strengths", p.strengths, idx, true)}
-    ${renderList("Weaknesses", p.weaknesses, idx, true)}
-    ${renderList("Influence Skills", p.influence_skills, idx, true)}
-    <p><strong>Photo:</strong><br>
+    <div class="edit-form">
+      <h2>Editing: ${p.name || 'New Profile'}</h2>
+  
+      <!-- Core fields wrapped in two cards -->
+      <div class="edit-lists">
+        <!-- Left card -->
+        <div class="edit-list">
+          <div class="field-group">
+            ${fieldInput("Name", "name", p.name)}
+            ${fieldInput("Attitude", "attitude", p.attitude, true)}
+            ${fieldInput("Goal", "goal", p.goal, true)}
+            ${fieldInput("Benefit", "benefit", p.benefit, true)}
+            ${fieldInput("Special", "special", p.special, true)}
+          </div>
+        </div>
+  
+        <!-- Right card -->
+        <div class="edit-list">
+          <div class="field-group">
+            ${fieldInput("Appearance", "appearance", p.appearance, true)}
+            ${fieldInput("Background", "background", p.background, true)}
+            ${fieldInput("Personality", "personality", p.personality, true)}
+            ${fieldInput("Influence Successes", "influence_successes", p.influence_successes)}
+            ${fieldInput("Successes Needed", "successes_needed", p.successes_needed)}
+          </div>
+        </div>
+      </div>
+  
+      <!-- Existing list cards -->
+      <div class="edit-lists">
+        <div class="edit-list">
+          <h3>Biases</h3>
+          ${renderList("Biases", p.biases, idx, true)}
+        </div>
+        <div class="edit-list">
+          <h3>Strengths</h3>
+          ${renderList("Strengths", p.strengths, idx, true)}
+        </div>
+        <div class="edit-list">
+          <h3>Weaknesses</h3>
+          ${renderList("Weaknesses", p.weaknesses, idx, true)}
+        </div>
+        <div class="edit-list">
+          <h3>Influence Skills</h3>
+          ${renderList("Influence Skills", p.influence_skills, idx, true)}
+        </div>
+      </div>
+  
+      <!-- Photo upload remains its own card -->
+      <div class="edit-list photo-group">
+        <h3>Photo</h3>
         <input type="file" id="edit-photo-file" accept="image/*" />
-    </p>
-    <button class="edit" onclick="saveEdits(${idx})">💾 Save</button>
-    <button class="delete" onclick="cancelEdit()">❌ Cancel</button>
-    <hr>`;
-}
+      </div>
+  
+      <!-- Action buttons at bottom -->
+      <div class="edit-actions">
+        <button class="edit" onclick="saveEdits(${idx})">
+          <i class="fa-solid fa-check"></i>Save
+        </button>
+        <button class="delete" onclick="cancelEdit()">
+          <i class="fa-solid fa-xmark"></i>Cancel
+        </button>
+      </div>
+    </div>
+    `;
+  }
+  
+  
 
 // Field input helper
 function fieldInput(label, key, value, textarea = false) {

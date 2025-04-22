@@ -246,6 +246,196 @@
     object-fit: cover;
     object-position: center;
   }
+
+  button.download {
+    background: #6c63ff;
+    color: #fdf4dc;
+    border: 2px solid #372f25;
+    padding: 6px 10px;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    margin-top: 12px;
+    width: 100%;
+    text-align: center;
+  }
+  button.download:hover {
+    background: #574cc8;
+  }
+  
+  /* make icons sit nicely before button text */
+button i {
+  margin-right: 6px;
+  vertical-align: middle;
+  font-size: 1.1em;
+}
+
+/* optionally reduce padding on icon‑only buttons */
+button.edit, button.delete, button.add, button.download {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== Edit Form Layout ===== */
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: rgba(255,255,255,0.9);
+  padding: 20px;
+  border: 4px solid #5a381e;
+  border-radius: 8px;
+}
+
+.edit-form h2 {
+  margin-bottom: 0.5rem;
+  color: #5a381e;
+  text-align: center;
+}
+
+/* Two‑column grid for core fields */
+.edit-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Separate area for lists */
+.edit-lists {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.edit-list {
+  flex: 1 1 calc(50% - 20px);
+  background: rgba(232,213,183,0.8);
+  padding: 12px;
+  border: 2px solid #5a381e;
+  border-radius: 4px;
+}
+.edit-list h3 {
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+  color: #5a381e;
+}
+/* Inline list items + remove icon */
+.edit-list ul {
+  list-style: none;
+  padding-left: 0;
+}
+.edit-list ul li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.edit-list ul li button {
+  padding: 2px 6px;
+  font-size: 0.8rem;
+}
+
+/* Shrink Add buttons to inline */
+button.add {
+  display: inline-flex !important;
+  width: auto !important;
+  margin: 4px 0;
+  padding: 4px 8px;
+  font-size: 0.9rem;
+  border-radius: 4px;
+}
+
+/* Photo upload section */
+.edit-form .field-group.photo-group,
+.edit-form > .edit-section {
+  background: rgba(232,213,183,0.8);
+  padding: 12px;
+  border: 2px solid #5a381e;
+  border-radius: 4px;
+}
+.edit-form .photo-group h3 {
+  margin-bottom: 8px;
+}
+
+/* Action buttons at bottom */
+.edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 2px solid #5a381e;
+}
+.edit-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  border-radius: 4px;
+}
+
+/* ===== Replace white form/card backgrounds ===== */
+
+/* Detail card (view mode) */
+.detail-card {
+  /* instead of white, use parchment tone */
+  background: rgba(232, 213, 183, 0.9);
+}
+
+/* Edit form wrapper */
+.edit-form {
+  /* instead of white, use parchment tone */
+  background: rgba(232, 213, 183, 0.9);
+}
+
+/* Lists panels already use parchment tone, so they stay as-is */
+
+/* Sidebar already uses parchment tone */
+
+/* Text fields remain white for readability */
+input[type="text"],
+textarea,
+input[type="file"] {
+  background: #fff;
+}
+
+/* ===== Card Contrast Tweak ===== */
+
+/* Detail‑view cards (view & edit) */
+.detail-card,
+.edit-form {
+  /* a deeper parchment shade for contrast */
+  background: rgba(200, 170, 120, 0.95) !important;
+  /* stronger shadow to lift them off the background */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Keep list panels a touch lighter so sub‑sections are distinct */
+.edit-list,
+.field-group,
+.photo-group {
+  background: rgba(232, 213, 183, 0.9) !important;
+}
+
+/* Ensure your page background stays that parchment texture */
+body {
+  background: url('/static/images/parchment_bg.jpg') #fdf4dc;
+}
+
+/* Text inputs remain bright for legibility */
+input[type="text"],
+textarea,
+input[type="file"] {
+  background: #fff !important;
+}
+
+
+
+
   
   
   

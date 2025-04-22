@@ -2,6 +2,8 @@
 <html>
 <head>
   <title>Gretchen Control Panel</title>
+  <!-- FontAwesome for medieval‑style icons -->
+  <script src="https://kit.fontawesome.com/ff1ddf5152.js" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
   <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
   <script src="{{ url_for('static', filename='js/socket_handlers.js') }}"></script>
@@ -12,10 +14,13 @@
     <div class="sidebar">
       <h2>Profiles</h2>
       <div id="sidebar-list"></div>
-      <button class="add" onclick="createNewProfile()">➕ New Profile</button>
-      <button class="download" onclick="window.location.href='/download_profiles'">
-        📥 Download Profiles
+      <button class="add" onclick="createNewProfile()">
+        <i class="fa-solid fa-user-plus"></i> New Profile
       </button>
+      <button class="download" onclick="window.location.href='/download_profiles'">
+        <i class="fa-solid fa-file-arrow-down"></i> Export
+      </button>
+      
     </div>
     
 
