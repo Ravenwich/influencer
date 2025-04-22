@@ -1,5 +1,3 @@
-### FULL POLISHED gm.html ###
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +5,7 @@
   <title>GM Panel - Influence Combat App</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js"></script>
   <style>
+    /* --- styling stays same --- */
     body { font-family: Arial, sans-serif; margin: 0; display: flex; height: 100vh; background: #f0f2f5; }
     #sidebar { width: 250px; background: #fff; border-right: 1px solid #ddd; overflow-y: auto; padding: 10px; }
     #main { flex: 1; overflow-y: auto; padding: 20px; background: #f9f9fb; }
@@ -23,7 +22,8 @@
     .influence-btn { background-color: #007bff; }
     .section-title { font-weight: bold; margin-top: 10px; color: #555; }
     [contenteditable="true"] { background-color: #eef; border: 1px solid #99f; padding: 4px; border-radius: 4px; }
-    ul { padding-left: 20px; }
+    .list-item-row { display: flex; align-items: center; margin-bottom: 5px; }
+    .list-item-row input[type="text"] { flex: 1; }
     .switch { position: relative; display: inline-block; width: 50px; height: 24px; margin-left: 10px; vertical-align: middle; }
     .switch input { opacity: 0; width: 0; height: 0; }
     .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #dc3545; transition: .4s; border-radius: 34px; }
@@ -33,19 +33,16 @@
     .switch-label { font-size: 12px; margin-left: 5px; vertical-align: middle; }
     .icon-btn { background: none; border: none; cursor: pointer; font-size: 18px; margin-left: 5px; }
     .icon-btn:hover { color: #007bff; }
-    .list-item-row { display: flex; align-items: center; margin-bottom: 5px; }
-    .list-item-row input[type="text"] { flex: 1; }
-    .create-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; }
-    .create-form textarea, .create-form input[type="text"], .create-form input[type="number"] { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; }
-    .create-form input[type="file"] { grid-column: span 2; }
-    .create-form button[type="submit"] { grid-column: span 2; width: 100%; margin-top: 10px; }
+    ul { padding-left: 20px; }
   </style>
 </head>
+
 <body>
 <div id="sidebar">
   <h1>Profiles</h1>
   <div id="profile-list"></div>
 </div>
+
 <div id="main">
   <div id="main-content"></div>
 </div>
@@ -56,7 +53,9 @@ var profiles = [];
 var selectedProfileIndex = 0;
 
 function fetchProfiles() {
-  fetch('/api/get_profiles').then(r => r.json()).then(data => { profiles = data; renderSidebar(); renderMain(); });
+  fetch('/api/get_profiles')
+    .then(r => r.json())
+    .then(data => { profiles = data; renderSidebar(); renderMain(); });
 }
 
 function renderSidebar() {
@@ -83,7 +82,8 @@ function renderMain() {
   container.innerHTML = '';
 
   if (selectedProfileIndex === -1) {
-    renderCreateForm(container);
+    // Handle Create New separately
+    container.innerHTML = "<p style='text-align:center;'>Use the sidebar to create a new profile.</p>";
     return;
   }
 
@@ -96,29 +96,28 @@ function renderMain() {
   }
 
   div.innerHTML += `
-    <h2><span>${p.name}</span></h2>
+    <h2><span contenteditable="false">${p.name}</span></h2>
     <button class="edit-btn" onclick="enableEditMode(this, ${selectedProfileIndex})">Edit</button>
     <button class="edit-btn delete-btn" onclick="deleteProfile(${selectedProfileIndex})">Delete</button>
     <p><strong>Influence Successes:</strong> 
-    <span id="influence-successes">${p.influence_successes}</span> / 
-    <span id="successes-needed">${p.successesNeeded ?? ''}</span>
-    <button class="influence-btn" onclick="incrementSuccess(${selectedProfileIndex})">+1</button>
-    <button class="influence-btn reset-btn" onclick="resetSuccess(${selectedProfileIndex})">Reset</button>
+      <span id="influence-successes">${p.influence_successes}</span> / 
+      <span id="successes-needed" contenteditable="false">${p.successesNeeded}</span>
+      <button class="influence-btn" onclick="incrementSuccess(${selectedProfileIndex})">+1</button>
+      <button class="influence-btn reset-btn" onclick="resetSuccess(${selectedProfileIndex})">Reset</button>
     </p>
   `;
 
   ['appearance', 'background', 'personality', 'goal', 'attitude', 'benefit', 'special'].forEach(field => {
-    div.innerHTML += `<p><strong>${field.charAt(0).toUpperCase() + field.slice(1)}:</strong> <span>${p[field] || ''}</span></p>`;
+    div.innerHTML += `<p><strong>${capitalize(field)}:</strong> <span contenteditable="false">${p[field] || ''}</span></p>`;
   });
 
   ['biases', 'strengths', 'weaknesses', 'influence_skills'].forEach(cat => {
-    div.innerHTML += `<p class="section-title">${cat.replace('_', ' ').toUpperCase()}:</p><div id="${cat}-list">`;
-
+    div.innerHTML += `<p class="section-title">${capitalize(cat.replace('_', ' '))}:</p><div id="${cat}-list">`;
     p[cat].forEach((item, idx) => {
       const revealed = p.revealed[cat][idx];
       div.innerHTML += `
         <div class="list-item-row">
-          <span>${item}</span>
+          <span contenteditable="false">${item}</span>
           <label class="switch">
             <input type="checkbox" ${revealed ? 'checked' : ''} onchange="handleToggleReveal(this)" data-profile-index="${selectedProfileIndex}" data-category="${cat}" data-item-index="${idx}">
             <span class="slider"></span>
@@ -127,51 +126,92 @@ function renderMain() {
         </div>
       `;
     });
-
     div.innerHTML += `</div>`;
   });
 
   container.appendChild(div);
 }
 
-function renderCreateForm(container) {
-  const form = document.createElement('div');
-  form.className = 'profile-card';
-  form.innerHTML = `
-    <h2>Create New Profile</h2>
-    <form id="createProfileForm" class="create-form" enctype="multipart/form-data">
-      <input type="text" name="name" placeholder="Name" required>
-      <input type="number" name="successesNeeded" placeholder="Successes Needed" min="1" value="1">
-      <textarea name="appearance" placeholder="Appearance" required></textarea>
-      <textarea name="background" placeholder="Background" required></textarea>
-      <textarea name="personality" placeholder="Personality" required></textarea>
-      <textarea name="goal" placeholder="Goal" required></textarea>
-      <textarea name="attitude" placeholder="Attitude" required></textarea>
-      <textarea name="benefit" placeholder="Benefit" required></textarea>
-      <textarea name="special" placeholder="Special" required></textarea>
-      <input type="text" name="biases" placeholder="Biases (semicolon-separated)">
-      <input type="text" name="strengths" placeholder="Strengths (semicolon-separated)">
-      <input type="text" name="weaknesses" placeholder="Weaknesses (semicolon-separated)">
-      <input type="text" name="influence_skills" placeholder="Influence Skills (semicolon-separated)">
-      <input type="file" name="photo" accept="image/*">
-      <button type="submit" class="edit-btn">Create Profile</button>
-    </form>
-  `;
-  container.appendChild(form);
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
 
-  document.getElementById('createProfileForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const formData = new FormData(e.target);
+function enableEditMode(button, profileIndex) {
+  const card = button.closest('.profile-card');
+  const spans = card.querySelectorAll('span[contenteditable="false"]');
+  spans.forEach(span => span.contentEditable = true);
 
-    fetch('/api/create_profile', {
-      method: 'POST',
-      body: formData
-    }).then(() => {
-      e.target.reset();
-      selectedProfileIndex = 0;
-      fetchProfiles();
-    });
+  const successesNeeded = document.getElementById('successes-needed');
+  successesNeeded.outerHTML = `<input id="successes-needed-input" type="number" value="${successesNeeded.innerText.trim()}" min="1">`;
+
+  button.textContent = 'Save Changes';
+  button.className = 'edit-btn save-btn';
+  button.onclick = () => saveProfileEdits(card, profileIndex);
+}
+
+function saveProfileEdits(card, profileIndex) {
+  const spans = card.querySelectorAll('span[contenteditable="true"]');
+  const inputSuccesses = document.getElementById('successes-needed-input');
+  
+  const data = {
+    profile_index: profileIndex,
+    name: spans[0]?.innerText.trim(),
+    appearance: spans[1]?.innerText.trim(),
+    background: spans[2]?.innerText.trim(),
+    personality: spans[3]?.innerText.trim(),
+    goal: spans[4]?.innerText.trim(),
+    attitude: spans[5]?.innerText.trim(),
+    benefit: spans[6]?.innerText.trim(),
+    special: spans[7]?.innerText.trim(),
+    successesNeeded: parseInt(inputSuccesses.value.trim()) || 1,
+    influence_successes: parseInt(document.getElementById('influence-successes').innerText.trim()) || 0
+  };
+
+  fetch('/api/edit_profile', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).then(() => {
+    fetchProfiles();
   });
+}
+
+function handleToggleReveal(input) {
+  const profileIndex = input.dataset.profileIndex;
+  const category = input.dataset.category;
+  const itemIndex = input.dataset.itemIndex;
+
+  fetch('/api/toggle_reveal', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ profile_index: profileIndex, category: category, item_index: itemIndex })
+  });
+}
+
+function incrementSuccess(index) {
+  fetch('/api/increment_success', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ profile_index: index })
+  });
+}
+
+function resetSuccess(index) {
+  fetch('/api/reset_success', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ profile_index: index })
+  });
+}
+
+function deleteProfile(index) {
+  if (confirm('Are you sure you want to delete this profile?')) {
+    fetch('/api/delete_profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ profile_index: index })
+    });
+  }
 }
 
 socket.on('refresh_profiles', fetchProfiles);
