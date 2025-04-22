@@ -43,6 +43,10 @@ function createNewProfile() {
     socket.emit('create_profile', blank);
 }
 
+function sanitize(text) {
+    return text.replace(/<[^>]*>/g, '').trim();
+  }
+
 // Delete a profile with confirmation
 function deleteProfile(idx) {
     if (confirm("Are you sure you want to delete this profile?")) {
@@ -199,15 +203,53 @@ function renderList(label, items, profileIdx, gretchenMode) {
     return html;
 }
 
+/**
+ * Copy every current edit‑form input back into profiles[profileIdx]
+ * so that re‑rendering the form preserves what you've typed so far.
+ */
+function updateDraftFromForm(profileIdx) {
+    const p = profiles[profileIdx];
+    // simple fields
+    ['name','appearance','background','personality','attitude','goal','benefit','special']
+      .forEach(key => {
+        const el = document.getElementById(`edit-${key}`);
+        if (el) p[key] = el.value;
+      });
+    // numeric fields
+    ['influence_successes','successes_needed']
+      .forEach(key => {
+        const el = document.getElementById(`edit-${key}`);
+        if (el) p[key] = parseInt(el.value, 10) || 0;
+      });
+    // list fields
+    ['biases','strengths','weaknesses','influence_skills']
+      .forEach(category => {
+        profiles[profileIdx][category] = profiles[profileIdx][category]
+          .map((item, i) => {
+            const inp = document.getElementById(`edit-${category}-${i}`);
+            return {
+              text: inp ? inp.value : item.text,
+              revealed: item.revealed
+            };
+          });
+      });
+  }  
+
 // Add/remove helpers (new items hidden by default)
 function addListItem(profileIdx, category) {
+    // save draft before mutating
+    updateDraftFromForm(profileIdx);
+    // add new hidden‑by‑default entry
     profiles[profileIdx][category].push({ text: '', revealed: false });
-    renderDetail(true);
-}
-function removeListItem(profileIdx, category, itemIdx) {
+    renderDetail(isGretchen);
+  }
+  
+  function removeListItem(profileIdx, category, itemIdx) {
+    updateDraftFromForm(profileIdx);
     profiles[profileIdx][category].splice(itemIdx, 1);
-    renderDetail(true);
-}
+    renderDetail(isGretchen);
+  }
+  
 
 // Edit form (wrapper)
 function renderEditForm(p, idx) {
@@ -272,31 +314,48 @@ if (inputFile && inputFile.files.length > 0) {
     photoFilename = data.filename;
   }
 }
-    const getVal = key => document.getElementById(`edit-${key}`)?.value || '';
     const gatherList = category => profiles[idx][category]
         .map((_, i) => {
             const val = document.getElementById(`edit-${category}-${i}`)?.value || '';
             return { text: val, revealed: profiles[idx][category][i].revealed };
         })
         .filter(item => item.text.trim() !== '');
-    const updated = {
-        name: getVal('name'),
-        appearance: getVal('appearance'),
-        background: getVal('background'),
-        personality: getVal('personality'),
-        attitude: getVal('attitude'),
-        goal: getVal('goal'),
-        benefit: getVal('benefit'),
-        special: getVal('special'),
-        influence_successes: parseInt(getVal('influence_successes')) || 0,
-        successes_needed: parseInt(getVal('successes_needed')) || 0,
-        biases: gatherList('biases'),
-        strengths: gatherList('strengths'),
-        weaknesses: gatherList('weaknesses'),
-        influence_skills: gatherList('influence_skills'),
-        photo: photoFilename
+        const getClean = key => sanitize(document.getElementById(`edit-${key}`)?.value || '');
 
-    };
-    socket.emit('update_profile', { index: idx, profile: updated });
-    editingIndex = null;
-}
+        // Build updated profile
+        const updated = {
+          name: getClean('name'),
+          appearance: getClean('appearance'),
+          background: getClean('background'),
+          personality: getClean('personality'),
+          attitude: getClean('attitude'),
+          goal: getClean('goal'),
+          benefit: getClean('benefit'),
+          special: getClean('special'),
+          influence_successes: parseInt(getClean('influence_successes'), 10) || 0,
+          successes_needed: parseInt(getClean('successes_needed'), 10) || 0,
+      
+          // For lists, reuse gatherList but sanitize each text:
+          biases: gatherList('biases').map(item => ({
+            text: sanitize(item.text),
+            revealed: item.revealed
+          })),
+          strengths: gatherList('strengths').map(item => ({
+            text: sanitize(item.text),
+            revealed: item.revealed
+          })),
+          weaknesses: gatherList('weaknesses').map(item => ({
+            text: sanitize(item.text),
+            revealed: item.revealed
+          })),
+          influence_skills: gatherList('influence_skills').map(item => ({
+            text: sanitize(item.text),
+            revealed: item.revealed
+          })),
+      
+          photo: photoFilename
+        };
+      
+        socket.emit('update_profile', { index: idx, profile: updated });
+        editingIndex = null;
+      }

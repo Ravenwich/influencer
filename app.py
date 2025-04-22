@@ -4,6 +4,7 @@ import json
 import os
 from models.profile import Profile
 from werkzeug.utils import secure_filename
+from flask import send_file
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -47,6 +48,13 @@ def upload_photo():
     file.save(save_path)
     return jsonify({"filename": filename})
 
+@app.route('/download_profiles')
+def download_profiles():
+    # PROFILE_FILE is already defined as 'profiles.json'
+    return send_file(PROFILE_FILE,
+                     as_attachment=True,
+                     download_name='profiles.json',
+                     mimetype='application/json')
 
 @socketio.on('create_profile')
 def create_profile(data):
