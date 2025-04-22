@@ -240,8 +240,6 @@ function saveProfileEdits(card, profileIndex) {
   });
 }
 
-
-
 function collectListInputsAndReveals(sectionId) {
   const section = document.getElementById(`${sectionId}-list`);
   const rows = section.querySelectorAll('.list-item-row');
@@ -250,19 +248,21 @@ function collectListInputsAndReveals(sectionId) {
   const revealed = [];
 
   rows.forEach(row => {
-    const textInput = row.querySelector('input[type="text"]');
-    const revealCheckbox = row.querySelector('input[type="checkbox"]');
+    let textInput = row.querySelector('input[type="text"]');
+    let checkboxInput = row.querySelector('input[type="checkbox"]');
 
     if (textInput) {
-      items.push(textInput.value.trim());
-    }
-    if (revealCheckbox) {
-      revealed.push(revealCheckbox.checked);
+      const value = textInput.value.trim();
+      if (value !== "") {
+        items.push(value);
+        revealed.push(checkboxInput?.checked || false);
+      }
     }
   });
 
   return { items, revealed };
 }
+
 
 function addListItem(sectionId) {
   const listDiv = document.getElementById(`${sectionId}-list`);
