@@ -156,8 +156,12 @@ def create_profile():
 @app.route('/api/edit_profile', methods=['POST'])
 def edit_profile():
     try:
-        data = request.get_json()
-        print("Received data for edit_profile:", json.dumps(data, indent=2))  # 🖨 Print the incoming data
+        data = request.get_json(force=True)
+        if not data:
+            print("No data received or JSON parse error!")
+            return jsonify(success=False, error="No JSON body"), 400
+
+        print("Received data for edit_profile:", json.dumps(data, indent=2))
 
         profile_index = int(data['profile_index'])
         print(f"Editing profile index: {profile_index}")
