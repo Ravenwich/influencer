@@ -53,9 +53,9 @@
     }
     .header {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       margin-bottom: 20px;
-      flex-wrap: wrap;
     }
     .header img {
       width: 150px;
@@ -90,6 +90,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px 30px;
+      word-wrap: break-word;
     }
     .traits p {
       margin: 0;
@@ -97,118 +98,116 @@
     }
     ul {
       padding-left: 20px;
+      word-wrap: break-word;
+    }
+    li {
+      margin-bottom: 5px;
     }
   </style>
 </head>
 <body>
 
-  <div id="sidebar">
-    <h1>Profiles</h1>
-    <div id="profile-list"></div>
-  </div>
+<div id="sidebar">
+  <h1>Profiles</h1>
+  <div id="profile-list"></div>
+</div>
 
-  <div id="main">
-    <div id="main-content"></div>
-  </div>
+<div id="main">
+  <div id="main-content"></div>
+</div>
 
-  <script>
-    var socket = io();
-    var profiles = [];
-    var selectedProfileIndex = 0;
+<script>
+var socket = io();
+var profiles = [];
+var selectedProfileIndex = 0;
 
-    function fetchProfiles() {
-      fetch('/api/get_profiles')
-        .then(response => response.json())
-        .then(data => {
-          profiles = data;
-          renderSidebar();
-          renderMain();
-        });
-    }
-
-    function renderSidebar() {
-      const list = document.getElementById('profile-list');
-      list.innerHTML = '';
-
-      profiles.forEach((profile, index) => {
-        const item = document.createElement('div');
-        item.className = 'sidebar-item' + (selectedProfileIndex === index ? ' active' : '');
-        item.textContent = profile.name;
-        item.onclick = function() {
-          selectedProfileIndex = index;
-          renderSidebar();
-          renderMain();
-        };
-        list.appendChild(item);
-      });
-    }
-
-    function renderMain() {
-      const container = document.getElementById('main-content');
-      container.innerHTML = '';
-
-      if (profiles.length === 0) return;
-
-      const profile = profiles[selectedProfileIndex];
-      const div = document.createElement('div');
-      div.className = 'profile-card';
-
-      // Header Section (Photo + Name + Basic Info)
-      div.innerHTML += `
-        <div class="header">
-          ${profile.photo_filename ? `<img src="/static/uploads/${profile.photo_filename}" alt="Profile Photo">` : ''}
-          <div class="header-info">
-            <h2>${profile.name}</h2>
-            <p><strong>Influence Successes:</strong> ${profile.influence_successes}</p>
-          </div>
-        </div>
-      `;
-
-      // Bio Section
-      div.innerHTML += `
-        <div class="section">
-          <div class="section-title">Character Info</div>
-          <div class="traits">
-            <p><strong>Appearance:</strong> ${profile.appearance}</p>
-            <p><strong>Background:</strong> ${profile.background}</p>
-            <p><strong>Personality:</strong> ${profile.personality}</p>
-          </div>
-        </div>
-      `;
-
-      // Biases, Strengths, Weaknesses, Influence Skills
-      ['biases', 'strengths', 'weaknesses', 'influence_skills'].forEach(category => {
-        div.innerHTML += `
-          <div class="section">
-            <div class="section-title">${category.replace('_', ' ').toUpperCase()}</div>
-            <ul>
-        `;
-        let anyHidden = false;
-        profile[category].forEach((item, idx) => {
-          if (profile.revealed[category][idx]) {
-            div.innerHTML += `<li>${item}</li>`;
-          } else {
-            anyHidden = true;
-          }
-        });
-        if (anyHidden) {
-          div.innerHTML += `<li>???</li>`;
-        }
-        div.innerHTML += `
-            </ul>
-          </div>
-        `;
-      });
-
-      container.appendChild(div);
-    }
-
-    socket.on('refresh_profiles', function () {
-      fetchProfiles();
+function fetchProfiles() {
+  fetch('/api/get_profiles')
+    .then(response => response.json())
+    .then(data => {
+      profiles = data;
+      renderSidebar();
+      renderMain();
     });
+}
 
-    fetchProfiles();
-  </script>
+function renderSidebar() {
+  const list = document.getElementById('profile-list');
+  list.innerHTML = '';
+
+  profiles.forEach((profile, index) => {
+    const item = document.createElement('div');
+    item.className = 'sidebar-item' + (selectedProfileIndex === index ? ' active' : '');
+    item.textContent = profile.name;
+    item.onclick = () => {
+      selectedProfileIndex = index;
+      renderSidebar();
+      renderMain();
+    };
+    list.appendChild(item);
+  });
+}
+
+function renderMain() {
+  const container = document.getElementById('main-content');
+  container.innerHTML = '';
+
+  if (profiles.length === 0) return;
+
+  const profile = profiles[selectedProfileIndex];
+  const div = document.createElement('div');
+  div.className = 'profile-card';
+
+  div.innerHTML += `
+    <div class="header">
+      ${profile.photo_filename ? `<img src="/static/uploads/${profile.photo_filename}" alt="Profile Photo">` : ''}
+      <div class="header-info">
+        <h2>${profile.name}</h2>
+        <p><strong>Influence Successes:</strong> ${profile.influence_successes}</p>
+      </div>
+    </div>
+  `;
+
+  div.innerHTML += `
+    <div class="section">
+      <div class="section-title">Character Info</div>
+      <div class="traits">
+        <p><strong>Appearance:</strong> ${profile.appearance}</p>
+        <p><strong>Background:</strong> ${profile.background}</p>
+        <p><strong>Personality:</strong> ${profile.personality}</p>
+      </div>
+    </div>
+  `;
+
+  ['biases', 'strengths', 'weaknesses', 'influence_skills'].forEach(category => {
+    div.innerHTML += `
+      <div class="section">
+        <div class="section-title">${category.replace('_', ' ').toUpperCase()}</div>
+        <ul>
+    `;
+    let anyHidden = false;
+    profile[category].forEach((item, idx) => {
+      if (profile.revealed[category][idx]) {
+        div.innerHTML += `<li>${item}</li>`;
+      } else {
+        anyHidden = true;
+      }
+    });
+    if (anyHidden) {
+      div.innerHTML += `<li>???</li>`;
+    }
+    div.innerHTML += `
+        </ul>
+      </div>
+    `;
+  });
+
+  container.appendChild(div);
+}
+
+socket.on('refresh_profiles', fetchProfiles);
+fetchProfiles();
+</script>
 
 </body>
 </html>
