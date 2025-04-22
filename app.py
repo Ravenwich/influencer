@@ -157,37 +157,51 @@ def create_profile():
 def edit_profile():
     try:
         data = request.get_json()
+        print("Received data for edit_profile:", json.dumps(data, indent=2))  # 🖨 Print the incoming data
+
         profile_index = int(data['profile_index'])
+        print(f"Editing profile index: {profile_index}")
+
         profile = profiles[profile_index]
 
-        # Update simple fields
+        # Update simple text fields
         for field in ['name', 'appearance', 'background', 'personality', 'goal', 'attitude', 'benefit', 'special']:
             if field in data:
                 profile[field] = data[field]
+                print(f"Updated {field}: {data[field]}")
 
         if 'successesNeeded' in data:
             profile['successesNeeded'] = int(data['successesNeeded'])
+            print(f"Updated successesNeeded: {profile['successesNeeded']}")
 
         if 'influence_successes' in data:
             profile['influence_successes'] = int(data['influence_successes'])
+            print(f"Updated influence_successes: {profile['influence_successes']}")
 
-        # Update lists cleanly
+        # Update lists
         for field in ['biases', 'strengths', 'weaknesses', 'influence_skills']:
-            new_items = data.get(field, [])
-            revealed_data = data.get('revealed', {}).get(field, [])
-            profile[field] = new_items
-            profile['revealed'][field] = [
-                revealed_data[idx] if idx < len(revealed_data) else False
-                for idx in range(len(new_items))
-            ]
+            if field in data:
+                new_items = data.get(field, [])
+                revealed_data = data.get('revealed', {}).get(field, [])
+                print(f"Updating {field} list: {new_items}")
+                print(f"Updating {field} revealed: {revealed_data}")
+
+                profile[field] = new_items
+                profile['revealed'][field] = [
+                    revealed_data[idx] if idx < len(revealed_data) else False
+                    for idx in range(len(new_items))
+                ]
 
         save_profiles()
         socketio.emit('refresh_profiles')
+        print("Profile edited and saved successfully.")  # ✅
         return jsonify(success=True)
-    except Exception as e:
-        print(f"Error editing profile: {e}")
-        return jsonify(success=False), 500
 
+    except Exception as e:
+        print("Error occurred while editing profile:")
+        import traceback
+        traceback.print_exc()  # 🖨 Print full stack trace
+        return jsonify(success=False), 500
 
 
 @app.route('/api/delete_profile', methods=['POST'])

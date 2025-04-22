@@ -179,6 +179,8 @@ function enableEditMode(button, profileIndex) {
 }
 
 function saveProfileEdits(card, profileIndex) {
+  console.log("Starting saveProfileEdits...");
+
   const spans = card.querySelectorAll('span[contenteditable="true"]');
   const inputSuccesses = document.getElementById('successes-needed-input');
   
@@ -198,27 +200,47 @@ function saveProfileEdits(card, profileIndex) {
     benefit: spans[6]?.innerText.trim(),
     special: spans[7]?.innerText.trim(),
     successesNeeded: parseInt(inputSuccesses.value.trim()) || 1,
-    influence_successes: parseInt(document.getElementById('influence-successes').innerText.trim()) || 0,
+    influence_successes: parseInt(document.getElementById('influence-successes')?.innerText.trim()) || 0,
     biases: biasesData.items,
     strengths: strengthsData.items,
     weaknesses: weaknessesData.items,
     influence_skills: influenceSkillsData.items,
     revealed: {
-      biases: biasesData.revealed,
-      strengths: strengthsData.revealed,
-      weaknesses: weaknessesData.revealed,
-      influence_skills: influenceSkillsData.revealed
+      biases: Array.isArray(biasesData.revealed) ? biasesData.revealed : [],
+      strengths: Array.isArray(strengthsData.revealed) ? strengthsData.revealed : [],
+      weaknesses: Array.isArray(weaknessesData.revealed) ? weaknessesData.revealed : [],
+      influence_skills: Array.isArray(influenceSkillsData.revealed) ? influenceSkillsData.revealed : []
     }
   };
+
+  console.log("Prepared data to send to server:", JSON.stringify(data, null, 2));
 
   fetch('/api/edit_profile', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
-  }).then(() => {
-    fetchProfiles();
+  })
+  .then(response => {
+    if (!response.ok) {
+      console.error("Server responded with an error status!", response.status);
+    } else {
+      console.log("Profile edit successful, refreshing profiles...");
+    }
+    return response.json();
+  })
+  .then(json => {
+    if (json.success) {
+      fetchProfiles();
+    } else {
+      console.error("Server reported failure when editing profile!");
+    }
+  })
+  .catch(error => {
+    console.error("Error during saveProfileEdits fetch:", error);
   });
 }
+
+
 
 function collectListInputsAndReveals(sectionId) {
   const section = document.getElementById(`${sectionId}-list`);
