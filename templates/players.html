@@ -1,16 +1,34 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Players View</title>
-  <!-- FontAwesome for medieval‑style icons -->
-  <script src="https://kit.fontawesome.com/ff1ddf5152.js" crossorigin="anonymous"></script>
+  <meta charset="utf-8">
+  <title>Player Profiles</title>
+
+  <!-- FontAwesome (for any icons) -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-hYsPR+XGdEnEo/7vZpv9CN0KZq+gXGIYwlUeO8ZanMucr1YgJ6lG5cs7RZp3cRsCuXqgX6dUoYf0h0++1R9pag=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <!-- Pathfinder stylesheet -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+  <!-- Flag for player mode -->
+  <script>
+    window.IS_GRETCHEN = false;
+  </script>
+
+  <!-- Socket.IO client -->
   <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
+  <!-- Shared handlers (will read window.IS_GRETCHEN) -->
   <script src="{{ url_for('static', filename='js/socket_handlers.js') }}"></script>
 </head>
 <body>
   <div class="app-container">
-    <!-- Sidebar: list of profiles -->
+    <!-- Sidebar: just the profile list -->
     <div class="sidebar">
       <h2>Profiles</h2>
       <div id="sidebar-list"></div>
@@ -23,8 +41,8 @@
   </div>
 
   <script>
-    // load initial profiles and select index 0 by default
-    profiles = JSON.parse('{{ profiles|tojson|safe }}');
+    // Bootstrap with initial data and render
+    profiles      = JSON.parse('{{ profiles|tojson|safe }}');
     selectedIndex = 0;
     renderSidebar();
     renderDetail();

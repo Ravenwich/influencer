@@ -1,7 +1,7 @@
 // static/js/socket_handlers.js
 
 let profiles = [];
-let isGretchen = false;
+let isGretchen = Boolean(window.IS_GRETCHEN);
 let editingIndex = null;
 let newProfilePending = false;
 let selectedIndex = 0;
@@ -26,7 +26,7 @@ socket.on('profiles_updated', (newProfiles) => {
         newProfilePending = false;
     }
     renderSidebar();
-    renderDetail(isGretchen);
+    renderDetail();
 });
 
 // Create a new blank profile
@@ -94,7 +94,7 @@ function renderSidebar() {
             selectedIndex = i;
             editingIndex = null;
             renderSidebar();
-            renderDetail(isGretchen);
+            renderDetail();
         };
         list.appendChild(item);
     });
@@ -266,13 +266,13 @@ function addListItem(profileIdx, category) {
     updateDraftFromForm(profileIdx);
     // add new hidden‑by‑default entry
     profiles[profileIdx][category].push({ text: '', revealed: false });
-    renderDetail(isGretchen);
+    renderDetail();
   }
   
   function removeListItem(profileIdx, category, itemIdx) {
     updateDraftFromForm(profileIdx);
     profiles[profileIdx][category].splice(itemIdx, 1);
-    renderDetail(isGretchen);
+    renderDetail();
   }
   
 
@@ -364,11 +364,11 @@ function fieldInput(label, key, value, textarea = false) {
 // Handlers for edit flow
 function startEditProfile(idx) {
     editingIndex = idx;
-    renderDetail(true);
+    renderDetail();
 }
 function cancelEdit() {
     editingIndex = null;
-    renderDetail(true);
+    renderDetail();
 }
 async function saveEdits(idx) {
 

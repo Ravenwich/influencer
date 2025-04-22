@@ -1,28 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8">
   <title>Gretchen Control Panel</title>
-  <!-- FontAwesome for medieval‑style icons -->
-  <script src="https://kit.fontawesome.com/ff1ddf5152.js" crossorigin="anonymous"></script>
+
+  <!-- FontAwesome for styled icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-hYsPR+XGdEnEo/7vZpv9CN0KZq+gXGIYwlUeO8ZanMucr1YgJ6lG5cs7RZp3cRsCuXqgX6dUoYf0h0++1R9pag=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <!-- Your Pathfinder stylesheet -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+  <!-- Tell the JS this is Gretchen's page -->
+  <script>
+    window.IS_GRETCHEN = true;
+  </script>
+
+  <!-- Socket.IO client -->
   <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
+  <!-- Your shared handlers (reads window.IS_GRETCHEN) -->
   <script src="{{ url_for('static', filename='js/socket_handlers.js') }}"></script>
 </head>
 <body>
   <div class="app-container">
-    <!-- Sidebar: list + create -->
+    <!-- Sidebar -->
     <div class="sidebar">
       <h2>Profiles</h2>
       <div id="sidebar-list"></div>
       <button class="add" onclick="createNewProfile()">
-        <i class="fa-solid fa-user-plus"></i> New Profile
+        <i class="fa-solid fa-user-plus"></i>New Profile
       </button>
       <button class="download" onclick="window.location.href='/download_profiles'">
-        <i class="fa-solid fa-file-arrow-down"></i> Export
+        <i class="fa-solid fa-download"></i>Download Profiles
       </button>
-      
     </div>
-    
 
     <!-- Detail pane -->
     <div class="detail">
@@ -31,10 +47,13 @@
   </div>
 
   <script>
-    profiles = JSON.parse('{{ profiles|tojson|safe }}');
+    // Bootstrap with the initial JSON dump
+    profiles      = JSON.parse('{{ profiles|tojson|safe }}');
     selectedIndex = 0;
+
+    // Initial render
     renderSidebar();
-    renderDetail(true); // true = gretchenMode
+    renderDetail();
   </script>
 </body>
 </html>
