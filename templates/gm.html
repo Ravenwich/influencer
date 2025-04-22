@@ -1,194 +1,74 @@
-### FULL REWRITE: gm.html ###
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>GM Panel - Influence Combat App</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js"></script>
+  <meta charset="utf-8">
+  <title>GM Login</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; display: flex; height: 100vh; background: #f0f2f5; }
-    #sidebar { width: 250px; background: #fff; border-right: 1px solid #ddd; overflow-y: auto; padding: 10px; }
-    #main { flex: 1; overflow-y: auto; padding: 20px; background: #f9f9fb; }
-    h1 { text-align: center; color: #333; }
-    .sidebar-item { padding: 10px; margin-bottom: 5px; background: #eee; border-radius: 5px; cursor: pointer; text-align: center; }
-    .sidebar-item:hover, .sidebar-item.active { background: #007bff; color: white; }
-    .profile-card { background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin: auto; padding: 20px; max-width: 800px; }
-    input, textarea { width: 100%; margin-bottom: 10px; padding: 8px; border: 1px solid #ccc; border-radius: 5px; }
-    .list-section { margin-bottom: 20px; }
-    .list-section h3 { margin-bottom: 5px; }
-    .list-item { display: flex; align-items: center; margin-bottom: 5px; }
-    .list-item input[type="text"] { flex: 1; margin-right: 10px; }
-    .btn { padding: 8px 16px; margin-top: 10px; border: none; border-radius: 5px; cursor: pointer; background: #007bff; color: white; }
-    .btn.delete { background: #dc3545; }
+    .login-card {
+      max-width: 360px;
+      margin: 100px auto;
+      background: rgba(255,255,255,0.9);
+      padding: 24px;
+      border: 4px solid #5a381e;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      border-radius: 8px;
+      text-align: center;
+    }
+    .login-card h2 {
+      margin-bottom: 16px;
+      color: #5a381e;
+      font-family: 'Cinzel', serif;
+    }
+    .login-card label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    .login-card input[type="password"] {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 16px;
+      border: 2px solid #5a381e;
+      border-radius: 4px;
+      font-family: 'Cinzel', serif;
+    }
+    .login-card button {
+      background: #7d4117;
+      color: #fdf4dc;
+      border: 2px solid #5a381e;
+      padding: 8px 16px;
+      font-size: 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .login-card button:hover {
+      background: #5a381e;
+    }
+    #error-message {
+      margin-top: 16px;
+      color: #a02a1f;
+      font-weight: bold;
+      display: none;
+    }
   </style>
 </head>
-
 <body>
-<div id="sidebar">
-  <h1>Profiles</h1>
-  <div id="profile-list"></div>
-</div>
-
-<div id="main">
-  <div id="main-content"></div>
-</div>
-
-<script>
-const socket = io();
-let profiles = [];
-let selectedProfileIndex = null;
-
-function fetchProfiles() {
-  fetch('/api/get_profiles')
-    .then(res => res.json())
-    .then(data => {
-      profiles = data;
-      renderSidebar();
-      renderMain();
+  <div class="login-card">
+    <h2>GM Access</h2>
+    <form id="login-form">
+      <label for="password">Enter Password:</label>
+      <input type="password" id="password" name="password" required>
+      <button type="submit">Login</button>
+    </form>
+    <p id="error-message">Incorrect password</p>
+  </div>
+  <script>
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      document.getElementById('error-message').style.display = 'block';
     });
-}
-
-function renderSidebar() {
-  const sidebar = document.getElementById('profile-list');
-  sidebar.innerHTML = '';
-
-  profiles.forEach((profile, index) => {
-    const item = document.createElement('div');
-    item.className = 'sidebar-item' + (selectedProfileIndex === index ? ' active' : '');
-    item.textContent = profile.name;
-    item.onclick = () => {
-      selectedProfileIndex = index;
-      renderSidebar();
-      renderMain();
-    };
-    sidebar.appendChild(item);
-  });
-}
-
-function renderMain() {
-  const main = document.getElementById('main-content');
-  main.innerHTML = '';
-
-  if (selectedProfileIndex === null) return;
-
-  const profile = profiles[selectedProfileIndex];
-
-  const form = document.createElement('form');
-  form.innerHTML = `
-    <input type="text" id="name" value="${profile.name}" placeholder="Name" required>
-    <textarea id="appearance" placeholder="Appearance">${profile.appearance}</textarea>
-    <textarea id="background" placeholder="Background">${profile.background}</textarea>
-    <textarea id="personality" placeholder="Personality">${profile.personality}</textarea>
-    <textarea id="goal" placeholder="Goal">${profile.goal || ''}</textarea>
-    <textarea id="attitude" placeholder="Attitude">${profile.attitude || ''}</textarea>
-    <textarea id="benefit" placeholder="Benefit">${profile.benefit || ''}</textarea>
-    <textarea id="special" placeholder="Special">${profile.special || ''}</textarea>
-    <input type="number" id="successesNeeded" value="${profile.successesNeeded || 1}" placeholder="Successes Needed" min="1">
-    <input type="number" id="influence_successes" value="${profile.influence_successes || 0}" placeholder="Influence Successes" min="0">
-  `;
-
-  ['biases', 'strengths', 'weaknesses', 'influence_skills'].forEach(category => {
-    const section = document.createElement('div');
-    section.className = 'list-section';
-    section.innerHTML = `<h3>${category.replace('_', ' ').toUpperCase()}</h3>`;
-    section.id = `${category}-section`;
-
-    (profile[category] || []).forEach(item => {
-      const div = document.createElement('div');
-      div.className = 'list-item';
-      div.innerHTML = `
-        <input type="text" value="${item}" placeholder="Item">
-        <button type="button" class="btn delete" onclick="this.parentElement.remove()">🗑</button>
-      `;
-      section.appendChild(div);
-    });
-
-    const addButton = document.createElement('button');
-    addButton.type = 'button';
-    addButton.className = 'btn';
-    addButton.textContent = `+ Add to ${category}`;
-    addButton.onclick = () => {
-      const div = document.createElement('div');
-      div.className = 'list-item';
-      div.innerHTML = `
-        <input type="text" placeholder="New Item">
-        <button type="button" class="btn delete" onclick="this.parentElement.remove()">🗑</button>
-      `;
-      section.appendChild(div);
-    };
-
-    section.appendChild(addButton);
-    form.appendChild(section);
-  });
-
-  const saveButton = document.createElement('button');
-  saveButton.className = 'btn';
-  saveButton.textContent = 'Save Changes';
-  saveButton.type = 'button';
-  saveButton.onclick = saveProfileEdits;
-
-  form.appendChild(saveButton);
-  main.appendChild(form);
-}
-
-function saveProfileEdits() {
-  const data = {
-    profile_index: selectedProfileIndex,
-    name: document.getElementById('name').value,
-    appearance: document.getElementById('appearance').value,
-    background: document.getElementById('background').value,
-    personality: document.getElementById('personality').value,
-    goal: document.getElementById('goal').value,
-    attitude: document.getElementById('attitude').value,
-    benefit: document.getElementById('benefit').value,
-    special: document.getElementById('special').value,
-    successesNeeded: parseInt(document.getElementById('successesNeeded').value) || 1,
-    influence_successes: parseInt(document.getElementById('influence_successes').value) || 0,
-    biases: getListValues('biases'),
-    strengths: getListValues('strengths'),
-    weaknesses: getListValues('weaknesses'),
-    influence_skills: getListValues('influence_skills'),
-    revealed: {
-      biases: [],
-      strengths: [],
-      weaknesses: [],
-      influence_skills: []
-    }
-  };
-
-  fetch('/api/edit_profile', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
-  }).then(res => {
-    if (res.ok) {
-      console.log('Profile updated successfully.');
-      fetchProfiles();
-    } else {
-      console.error('Failed to update profile.');
-    }
-  }).catch(err => {
-    console.error('Error saving profile:', err);
-  });
-}
-
-function getListValues(section) {
-  const items = [];
-  const sectionDiv = document.getElementById(`${section}-section`);
-  if (sectionDiv) {
-    sectionDiv.querySelectorAll('input[type="text"]').forEach(input => {
-      if (input.value.trim() !== '') {
-        items.push(input.value.trim());
-      }
-    });
-  }
-  return items;
-}
-
-socket.on('refresh_profiles', fetchProfiles);
-fetchProfiles();
-</script>
-
+  </script>
 </body>
 </html>

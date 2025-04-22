@@ -1,31 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Players View</title>
+  <title>Gretchen Control Panel</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
   <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
   <script src="{{ url_for('static', filename='js/socket_handlers.js') }}"></script>
 </head>
 <body>
   <div class="app-container">
-    <!-- Sidebar: list of profiles -->
+    <!-- Sidebar: list + create -->
     <div class="sidebar">
       <h2>Profiles</h2>
       <div id="sidebar-list"></div>
+      <button class="edit" onclick="createNewProfile()">➕ New Profile</button>
     </div>
 
-    <!-- Detail pane: one profile at a time -->
+    <!-- Detail pane -->
     <div class="detail">
       <div id="profile-detail"></div>
     </div>
   </div>
 
   <script>
-    // load initial profiles and select index 0 by default
     profiles = JSON.parse('{{ profiles|tojson|safe }}');
     selectedIndex = 0;
     renderSidebar();
-    renderDetail();
+    renderDetail(true); // true = gretchenMode
   </script>
 </body>
 </html>

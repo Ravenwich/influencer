@@ -1,4 +1,4 @@
-flask
-flask-socketio
-eventlet
-Pillow
+Flask>=2.0
+flask-socketio>=5.0
+eventlet>=0.33
+werkzeug>=2.0

@@ -1,112 +1,94 @@
 [
-    {
-        "name": "Mistress Elira",
-        "influence_successes": 1,
-        "appearance": "An elegant woman with piercing green eyes and flowing robes.",
-        "background": "Once a court mage, now an advisor in political affairs.",
-        "personality": "Charming and witty, but easily bored.",
-        "biases": [
-            "Favors magic users",
-            "Looks down on commoners"
-        ],
-        "strengths": [
-            "Quick thinker",
-            "Wide network of contacts"
-        ],
-        "weaknesses": [
-            "Vain",
-            "Impatient"
-        ],
-        "influence_skills": [
-            "Deception",
-            "Arcana"
-        ],
-        "revealed": {
-            "biases": [
-                true,
-                false
-            ],
-            "strengths": [
-                false,
-                false
-            ],
-            "weaknesses": [
-                false,
-                false
-            ],
-            "influence_skills": [
-                false,
-                true
-            ]
-        }
-    },
-    {
-        "name": "Baron Nicolaus Okerra",
-        "appearance": "This handsomean stands a head taller than the crowd, and while starting to show his age with flecks of white in his black hair and beard, he retains a youthful smile and gentle eyes.\t\t\t\t\t\t\n\t\t\t\t\t\t\n\t\t\t\t\t\t",
-        "background": "A noble and hero in the county of Meratt, Baron Okerra is as equally renowned for his good looks as he is for his combat skills.\t\t\t\t\t\t\n\t\t\t\t\t\t",
-        "personality": "A celebrity in the tournament circuit and a kind but stern leader, Baron Nicolaus Okerra is considered one of Taldor\u2019s chief defenders of law and order. He has little time for pomp and circumstance, secluding himself in the noble courts of the senate building to debate with aspiring nobles on the importance of law. His charming demeanor is only somewhat mitigated by his staunch devotion to order, even when he defends the shadier aspects of a lawful society.",
-        "biases": [],
-        "strengths": [
-            "Loves Lasagna"
-        ],
-        "weaknesses": [
-            "Baron Okerra harbors one shard of doubt. The impact of Eutropia's successful bid to end Primogeniture. He believes strongly in tradition and is worried that it will be impacted by the decision."
-        ],
-        "influence_skills": [
-            "Local",
-            "Sense Motive",
-            "Diplomacy"
-        ],
-        "influence_successes": 0,
-        "revealed": {
-            "biases": [],
-            "strengths": [
-                true
-            ],
-            "weaknesses": [
-                false
-            ],
-            "influence_skills": [
-                true,
-                false,
-                false
-            ]
-        }
-    },
-    {
-        "name": "Dr. Ratio",
-        "appearance": "Immaculate",
-        "background": "Unknown",
-        "personality": "Erudite",
-        "biases": [],
-        "strengths": [],
-        "weaknesses": [],
-        "influence_skills": [],
-        "influence_successes": 1,
-        "photo_filename": "5efac875789344f6b8ee27b5c131d448_ratiocone.png",
-        "revealed": {
-            "biases": [],
-            "strengths": [],
-            "weaknesses": [],
-            "influence_skills": []
-        }
-    },
-    {
-        "name": "Aventurine",
-        "appearance": "a",
-        "background": "b",
-        "personality": "c",
-        "biases": [],
-        "strengths": [],
-        "weaknesses": [],
-        "influence_skills": [],
-        "influence_successes": 4,
-        "photo_filename": "168c9ca0c5404c5c960d4a5974062ea3_ratiocone.png",
-        "revealed": {
-            "biases": [],
-            "strengths": [],
-            "weaknesses": [],
-            "influence_skills": []
-        }
-    }
+  {
+    "name": "Captain Elira",
+    "appearance": "A tall woman with sharp green eyes, wearing a long military coat adorned with medals.",
+    "background": "Once a respected officer, now a rogue agent operating outside the chain of command.",
+    "personality": "Cunning and methodical, but still retains a surprising sense of humors.",
+    "goal": "To dismantle the corrupt hierarchy that betrayed her, piece by piece.",
+    "benefit": "Can call in favors from old contacts within the military.",
+    "special": "Possesses classified knowledge of secret operations.",
+    "influence_successes": 2,
+    "successes_needed": 4,
+    "biases": [
+      {
+        "text": "Distrusts anyone in uniforms.",
+        "revealed": false
+      },
+      {
+        "text": "Respects cleverness over authority.",
+        "revealed": false
+      }
+    ],
+    "strengths": [
+      {
+        "text": "Expert strategist",
+        "revealed": true
+      },
+      {
+        "text": "Highly persuasive",
+        "revealed": true
+      }
+    ],
+    "weaknesses": [
+      {
+        "text": "Short temper when dealing with bureaucracy",
+        "revealed": true
+      }
+    ],
+    "influence_skills": [
+      {
+        "text": "Tactics",
+        "revealed": false
+      },
+      {
+        "text": "Deception",
+        "revealed": true
+      },
+      {
+        "text": "Swimming",
+        "revealed": true
+      }
+    ],
+    "photo": "wizard2.png"
+  },
+  {
+    "name": "Scholar Veyra",
+    "appearance": "A slender figure wrapped in layers of flowing robes, carrying an ancient tome.",
+    "background": "Born into a secretive academic order, Veyra seeks forbidden knowledge to protect it from misuse.",
+    "personality": "Quietly intense, obsessed with uncovering hidden truths.",
+    "goal": "Unlock the secrets of a lost civilization before rival scholars get there first.",
+    "benefit": "Knows the locations of several undiscovered ruins.",
+    "special": "Can decipher ancient languages at a glance.",
+    "influence_successes": 1,
+    "successes_needed": 3,
+    "biases": [
+      {
+        "text": "Believes most people are too shortsighted to handle true knowledge.",
+        "revealed": true
+      }
+    ],
+    "strengths": [
+      {
+        "text": "Photographic memory",
+        "revealed": true
+      }
+    ],
+    "weaknesses": [
+      {
+        "text": "Paranoid about spies",
+        "revealed": false
+      }
+    ],
+    "influence_skills": [
+      {
+        "text": "Lore",
+        "revealed": true
+      },
+      {
+        "text": "Research",
+        "revealed": true
+      }
+    ],
+    "photo": "scholar_veyra.png"
+  }
 ]
