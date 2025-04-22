@@ -144,28 +144,28 @@ function enableEditMode(button, profileIndex) {
   const successesNeeded = document.getElementById('successes-needed');
   successesNeeded.outerHTML = `<input id="successes-needed-input" type="number" value="${successesNeeded.innerText.trim()}" min="1">`;
 
+  // Rebuild all list fields
   ['biases', 'strengths', 'weaknesses', 'influence_skills'].forEach(section => {
     const listDiv = document.getElementById(`${section}-list`);
-    const items = listDiv.querySelectorAll('.list-item-row');
+    const p = profiles[selectedProfileIndex];
 
-    items.forEach(item => {
-      const textSpan = item.querySelector('span');
-      const checkbox = item.querySelector('input[type="checkbox"]');
+    listDiv.innerHTML = ''; // CLEAR EXISTING
 
-      const text = textSpan ? textSpan.textContent.trim() : '';
-      const revealed = checkbox ? checkbox.checked : false;
-
-      item.innerHTML = `
-        <input type="text" value="${text}">
+    p[section].forEach((item, idx) => {
+      const revealed = p.revealed[section][idx];
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'list-item-row';
+      itemDiv.innerHTML = `
+        <input type="text" value="${item}">
         <label class="switch">
           <input type="checkbox" ${revealed ? 'checked' : ''}>
           <span class="slider"></span>
         </label>
         <button class="icon-btn" onclick="deleteListItem(this)">🗑</button>
       `;
+      listDiv.appendChild(itemDiv);
     });
 
-    // Add a button to add new list items
     const addBtn = document.createElement('button');
     addBtn.className = 'icon-btn';
     addBtn.innerHTML = '➕';
@@ -177,6 +177,7 @@ function enableEditMode(button, profileIndex) {
   button.className = 'edit-btn save-btn';
   button.onclick = () => saveProfileEdits(card, profileIndex);
 }
+
 
 function saveProfileEdits(card, profileIndex) {
   console.log("Starting saveProfileEdits...");
