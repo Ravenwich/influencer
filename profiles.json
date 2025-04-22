@@ -1,112 +1,18 @@
 [
   {
-    "name": "Captain Eliraf",
-    "appearance": "A tall woman with sharp green eyes, wearing a long military coat adorned with medals.",
-    "background": "Once a respected officer, now a rogue agent operating outside the chain of command.s",
-    "personality": "Cunning and methodical, but still retains a surprising sense of humors.",
-    "attitude": "Fun",
-    "goal": "To dismantle the corrupt hierarchy that betrayed her, piece by piece.",
-    "benefit": "Can call in favors from old contacts within the military.",
-    "special": "Possesses classified knowledge of secret operations.",
-    "influence_successes": 0,
-    "successes_needed": 4,
-    "biases": [
-      {
-        "text": "Distrusts anyone in uniforms.",
-        "revealed": true
-      },
-      {
-        "text": "Respects cleverness over authority.",
-        "revealed": false
-      }
-    ],
-    "strengths": [
-      {
-        "text": "Expert strategist",
-        "revealed": true
-      },
-      {
-        "text": "Highly persuasive",
-        "revealed": true
-      }
-    ],
-    "weaknesses": [
-      {
-        "text": "Short temper when dealing with bureaucracy",
-        "revealed": true
-      }
-    ],
-    "influence_skills": [
-      {
-        "text": "Tactics",
-        "revealed": false
-      },
-      {
-        "text": "Deception",
-        "revealed": true
-      },
-      {
-        "text": "Swimming",
-        "revealed": true
-      }
-    ],
-    "photo": "ratiocone.png"
-  },
-  {
-    "name": "Scholar Veyra",
-    "appearance": "A slender figure wrapped in layers of flowing robes, carrying an ancient tome.",
-    "background": "Born into a secretive academic order, Veyra seeks forbidden knowledge to protect it from misuse.",
-    "personality": "Quietly intense, obsessed with uncovering hidden truths.",
-    "attitude": "",
-    "goal": "Unlock the secrets of a lost civilization before rival scholars get there first.",
-    "benefit": "Knows the locations of several undiscovered ruins.",
-    "special": "Can decipher ancient languages at a glance.",
-    "influence_successes": 1,
-    "successes_needed": 3,
-    "biases": [
-      {
-        "text": "Believes most people are too shortsighted to handle true knowledge.",
-        "revealed": true
-      }
-    ],
-    "strengths": [
-      {
-        "text": "Photographic memory",
-        "revealed": true
-      }
-    ],
-    "weaknesses": [
-      {
-        "text": "Paranoid about spies",
-        "revealed": false
-      }
-    ],
-    "influence_skills": [
-      {
-        "text": "Lore",
-        "revealed": true
-      },
-      {
-        "text": "Research",
-        "revealed": true
-      }
-    ],
-    "photo": "scholar_veyra.png"
-  },
-  {
-    "name": "COUNT BARTELBY LOTHEED",
+    "name": "Count Bartelby Lotheed",
     "appearance": "Bartelby is tall, thin, and handsome, with thick hair and expressive eyes.",
     "background": "Steward of the Palace of Birdsong.",
     "personality": "Bartelby is aloof, obsessive, and loyal to those he cares about. He is arrogant and charismatic in  equal measure. He\u2019s exactly as courteous to others and the help as etiquette demands.",
-    "attitude": "",
-    "goal": "Bartelby wants to maintain a tight grip on Meratt.",
-    "benefit": "Cool stuff",
-    "special": "He's not a vammpire",
+    "attitude": "Indifferent",
+    "goal": "Bartelby wants to maintain a tight grip on Meratt. Secretly, he hopes to build a stronger alliance with Baron Okerra to provide the extra soldiers and military expertise.",
+    "benefit": "If the PCs shift Count Bartelby\u2019s attitude to friendly, he welcomes them to visit the Palace of Birdsong at any time to discuss the arcane arts and collaborate on arcane or historical studies. This allows PCs the chance to scout out the rest of the palace (except the royal apartments; areas H31\u2013H37), and also allows them to use the Lotheed arcane laboratory, granting a +2 bonus on Craft (alchemy) checks and Spellcraft checks to learn a spell from a spellbook or scroll. If the PCs shift Bartelby\u2019s attitude to helpful, he \u201cremembers\u201d the taxes he\u2019s collected on their behalf\u2014mostly timber and supplies\u2014 worth either 2,000 gp if sold, or 8,000 gp if put toward town improvements.",
+    "special": "",
     "influence_successes": 0,
     "successes_needed": 10,
     "biases": [
       {
-        "text": "Bartelby despises fools, and has no time for anyone without an Intelligence score of at least 14 (\u20132).",
+        "text": "Bartelby despises fools, and has no time for anyone without an Intelligence score of at least 12 or ranks in at least three different Knowledge skills (\u20132).",
         "revealed": false
       },
       {
@@ -116,13 +22,13 @@
     ],
     "strengths": [
       {
-        "text": "Bartelby has only contempt for nonhumans and feels they should know their place and  remain quiet. Invoking any sense of collective identity with non-humans raises his hackles.",
+        "text": "Bartelby has only contempt for the common peasant and feels they should know their place and remain quiet. Invoking any sense of compassion for the downtrodden or sense of collective identity with peasants raises his hackles.",
         "revealed": false
       }
     ],
     "weaknesses": [
       {
-        "text": "Bartelby is greatly swayed by gaudy gifts. Anyone presenting him with a gift worth at least 500 gp gains a +1 bonus on checks to influence him.",
+        "text": "Bartelby is greatly swayed by intellectual gifts. Anyone presenting him with an antique or spellbook worth at least 250 gp gains a +1 bonus on checks to influence him.",
         "revealed": false
       }
     ],
@@ -138,45 +44,280 @@
       {
         "text": "Diplomacy",
         "revealed": false
+      },
+      {
+        "text": "Knowledge (planes)",
+        "revealed": false
+      },
+      {
+        "text": "Bluff",
+        "revealed": false
       }
     ],
-    "photo": "default.png"
+    "photo": "Bartelby_Lotheed_Token.png"
   },
   {
-    "name": "",
-    "appearance": "",
-    "background": "",
-    "personality": "",
-    "attitude": "",
-    "goal": "",
-    "benefit": "",
-    "special": "",
+    "name": "Baron Nicolaus Okerra",
+    "appearance": "Tall, handsome, and still very fit despite his advancing age, Nicolaus stands a head taller than most.",
+    "background": "Popular local noble and soldier, with a strict sense of honor.",
+    "personality": "Popular, brave, and practical, the baron speaks his mind and believes in straightforward action rather than political solutions. He\u2019s a hard-working man who often rolls up his sleeves to help his subjects.",
+    "attitude": "Friendly",
+    "goal": "Baron Okerra has better things to do than hobnob with his neighbors, but he always holds out some hope that he can inspire other nobles in the area to behave responsibly.",
+    "benefit": "Baron Okerra is happy to help his friends improve their land and the lives of the peasants they oversee. If the PCs successfully shift his attitude to friendly, he sends them building supplies, loaned artisans, and timber to improve their land in Part 2 of this adventure.",
+    "special": "Baron Okerra believes in the rule of law, and if he learns that the PCs are trying to subvert Count Lotheed\u2019s rule, he will report as much, subtracting 2d4 Loyalty Points. If made friendly, he accepts Princess Eutropia\u2019s claim to the land as legitimate, but he can\u2019t bring himself to assist in such underhanded tactics and remains neutral in the conflict. If made helpful, he accepts the occasional need for the weak to embrace unsavory tactics to triumph over oppression and\nbecomes a willing ally, adding 2 Loyalty Points.",
     "influence_successes": 0,
-    "successes_needed": 1,
+    "successes_needed": 6,
     "biases": [
       {
-        "text": "",
+        "text": "Nicolaus respects integrity, and has a predilection for other lawful characters (+2).",
         "revealed": false
       }
     ],
     "strengths": [
       {
-        "text": "",
+        "text": "Nicolaus is especially resistant to any discussions that suggest subterfuge or all-out revolution.",
         "revealed": false
       }
     ],
     "weaknesses": [
       {
-        "text": "",
+        "text": "Baron Okerra has always associated goodness with obedience and service, but he\u2019s increasingly questioning the morality of his life since the Exaltation Massacre). Any expression of sympathy touches Nicolaus\u2019s heart.",
         "revealed": false
       }
     ],
     "influence_skills": [
       {
-        "text": "",
+        "text": "Handle Animal",
+        "revealed": false
+      },
+      {
+        "text": "Profession (architect)",
+        "revealed": false
+      },
+      {
+        "text": "Profession (driver)",
+        "revealed": false
+      },
+      {
+        "text": "Profession (farmer)",
+        "revealed": false
+      },
+      {
+        "text": "Profession (fisher)",
+        "revealed": false
+      },
+      {
+        "text": "Profession (midwife)",
+        "revealed": false
+      },
+      {
+        "text": "Profession (porter)",
+        "revealed": false
+      },
+      {
+        "text": "Profession (soldier)",
+        "revealed": false
+      },
+      {
+        "text": "Ride",
+        "revealed": false
+      },
+      {
+        "text": "Diplomacy",
         "revealed": false
       }
     ],
-    "photo": "default.png"
+    "photo": "Nicolaus_Okerra_Token.png"
+  },
+  {
+    "name": "Dame Parthena Crabbe",
+    "appearance": "Parthena is a broad, middle-aged woman with a wide smile and expressive eyes. She smells overwhelmingly of camphor and sugar.",
+    "background": "The opinionated Dame Mistress Crabbe deals with her unresolved grief of her late husband\u2019s passing by investing herself in everyone else\u2019s lives.",
+    "personality": "Parthena isn\u2019t one for introspection, preferring to know everyone else\u2019s mind. She is the embodiment of Taldan aristocratic hypocrisy\u2014she eats, moves, and even sleeps correctly, but without any consideration for why. Beyond her interest in local and national gossip, she loves discussing art, antiques, and fashion.",
+    "attitude": "Indifferent",
+    "goal": "Parthena\u2019s current obsession is finding a suitor for Sepsinia, and she makes no secret of it, but her daughter\u2019s depression,\nshyness, and apparent ill health have complicated her search.",
+    "benefit": "So long as Dame Crabbe remains at least indifferent to the PCs, she later invites them to her estate for tea (see Event 1 on page 20) to continue trying to arrange a marriage. If the PCs shift Parthena\u2019s attitude to helpful, she welcomes them with a housewarming gift: a gilded black marble bust of Parthena in her youth. The decorative necklace on the bust incorporates an amulet of natural armor +2 to protect the bust from wear and tear. Removing the amulet without damaging the statue requires a successful DC 15 Craft (jewelry or sculpture) check, or a DC 20 Disable Device check. Every failed skill check reduces the statue\u2019s value by 150 gp.",
+    "special": "Dame Crabbe loves to tease any information she learns, even if she likes the PCs. If she learns of the PCs\u2019 true goal of undermining Count Bartelby, she readily shares this knowledge, subtracting 1d4 Loyalty Points. If shifted to friendly, she merely hints at what she knows, instead subtracting 1 Loyalty Point. Parthena will only keep such knowledge to herself if made helpful.",
+    "influence_successes": 0,
+    "successes_needed": 5,
+    "biases": [
+      {
+        "text": "Parthena\u2019s shallow judgment of others means appearances are what really matter; she\u2019s predisposed toward anyone sporting at least 500 gp worth of jewelry (+2).",
+        "revealed": false
+      },
+      {
+        "text": "While she has a thick skin regarding her own physique, she is extremely protective of her daughter and holds a grudge against anyone who insults the girl (\u20132).",
+        "revealed": false
+      }
+    ],
+    "strengths": [
+      {
+        "text": "Dame Crabbe is bored by anyone taking their noble responsibilities too seriously\u2014one of the few reasons she hasn\u2019t tried to pursue Baron Okerra for herself.",
+        "revealed": false
+      }
+    ],
+    "weaknesses": [
+      {
+        "text": "Anyone who seems romantically inclined toward Sepsinia\u2014or better yet, attempts to woo her\u2014will find Dame Crabbe very friendly. Parthena hasn\u2019t noticed her own lack of love life and is easily flustered by anyone flirting with her.",
+        "revealed": false
+      }
+    ],
+    "influence_skills": [
+      {
+        "text": "Bluff",
+        "revealed": false
+      },
+      {
+        "text": "Knowledge (local)",
+        "revealed": false
+      },
+      {
+        "text": "Perform (any)",
+        "revealed": false
+      },
+      {
+        "text": "Appraise",
+        "revealed": false
+      },
+      {
+        "text": "Knowledge (nobility)",
+        "revealed": false
+      },
+      {
+        "text": "Diplomacy",
+        "revealed": false
+      }
+    ],
+    "photo": "Parthena_Crabbe_Token.png"
+  },
+  {
+    "name": "Her Grace Baroness Legate Adella Voinum",
+    "appearance": "A woman of legendary stature in her youth, age has finally begun to bend the baroness, and she now stands merely 6 feet\ntall. She still proudly displays the scar left when an Andoren spear pierced her face years ago.",
+    "background": "A woman of wealth and discipline, Baroness Voinum is a retired commander of the Taldan Phalanx. She is best known as the local grump\u2014condescending, detached, and judgmental\u2014but is also a font of knowledge regarding the region\u2019s history.",
+    "personality": "Clever and scathing, Baroness Voinum wields considerable influence. The Voinum family has been part of the county for a thousand years and proudly upholds Taldan ideals\u2014harsh but fair by most standards.",
+    "attitude": "Unfriendly",
+    "goal": "Adella can see the social decay in Taldor, but she attributes it to a lack of discipline and respect for tradition. She wants to be an example of how the social system is supposed to work, and cajoles or browbeats her neighbors into following her lead.",
+    "benefit": "If the PCs shift Baroness Voinum\u2019s attitude to friendly, she admits to a certain fondness for the grapes the Betony vineyards once produced before the fields flooded and states that if they can restore the estate farms, she\u2019ll happily agree to a trade deal that provides them with extensive infrastructure repairs, granting 3,000 gp that can be spent only on town improvements. If PCs manage to shift Baroness Voinum\u2019s attitude to helpful, they immediately gain 1d3 influence successes each with Dame Crabbe and Baron Okerra.",
+    "special": "Baroness Adella quietly despises the Lotheeds, and if she learns of the PCs\u2019 agenda, she won\u2019t tell the count.",
+    "influence_successes": 0,
+    "successes_needed": 1,
+    "biases": [
+      {
+        "text": "Baroness Voinum dislikes the wanton ways of youth and has a bias against any character younger than 25 years old unless they are lawful (\u20132).",
+        "revealed": false
+      },
+      {
+        "text": "She has a soft spot for wine and is far more amicable when drinking (+2).",
+        "revealed": false
+      }
+    ],
+    "strengths": [
+      {
+        "text": "Adella sees flattery as shallow pandering.",
+        "revealed": false
+      }
+    ],
+    "weaknesses": [
+      {
+        "text": "Baroness Voinum respects those with regard for tradition and an interest in history of the county and the nation.",
+        "revealed": false
+      }
+    ],
+    "influence_skills": [
+      {
+        "text": "Knowledge (geography)",
+        "revealed": false
+      },
+      {
+        "text": "Knowledge (history)",
+        "revealed": false
+      },
+      {
+        "text": "Profession (brewer)",
+        "revealed": false
+      },
+      {
+        "text": "Ride",
+        "revealed": false
+      },
+      {
+        "text": "Diplomacy",
+        "revealed": false
+      },
+      {
+        "text": "Intimidate",
+        "revealed": false
+      }
+    ],
+    "photo": "Adella_Voinum_Token.png"
+  },
+  {
+    "name": "Honorary Tribune Onora Piscum",
+    "appearance": "Onora is plain, muscular, and heavily freckled. A half-elf, she looks far younger than her actual 55 years.",
+    "background": "A commoner both uncomfortable and unwelcome in the noble halls of the palace, Onora fell into the job of tribune of Stachys after the death of the hereditary tribune, Allis Betony, 10 years ago and her husband, the acting tribune, 5 years later.",
+    "personality": "Onora is a no-nonsense country girl and rarely thinks about the world beyond her small town. The half-elf maintains her position with a keen attention to detail and appreciates thoroughness in others.",
+    "attitude": "Unfriendly",
+    "goal": "Onora attends the count\u2019s events because she knows that the aristocracy will forget about her little town entirely if she doesn\u2019t, and they\u2019ll lose what minimal support they have. While she wouldn\u2019t mind staying on as sheriff, she would love to find someone else to handle the political aspects of her job.",
+    "benefit": "If Onora\u2019s attitude is shifted to friendly, the PCs\u2019 reputation in Stachys grows, improving the town\u2019s attitude toward them by one step. If her attitude is shifted to helpful, Onora helps provide alibis for the PCs\u2019 actions or absences, granting a +2 circumstance bonus on Bluff and Disguise checks to conceal their involvement in revolutionary activities.",
+    "special": "Tribune Piscum wants nothing to do with noble infighting, and if she learns of the PC\u2019s plot to undermine Bartelby, she keeps that knowledge to herself unless made hostile.",
+    "influence_successes": 0,
+    "successes_needed": 4,
+    "biases": [
+      {
+        "text": "Tribune Piscum despises anyone who flaunts their wealth and power (\u20132)",
+        "revealed": false
+      },
+      {
+        "text": "She warms up to anyone who clearly understands a practical skill or two, such as Craft, Handle Animal, Profession, or Survival (+2).",
+        "revealed": false
+      }
+    ],
+    "strengths": [
+      {
+        "text": "Onora has a quiet hatred for Count Bartelby and is especially cold to anyone who tries to use his name or influence to persuade her.",
+        "revealed": false
+      }
+    ],
+    "weaknesses": [
+      {
+        "text": "Onora has a deep love for homespun metaphors and colloquialisms.",
+        "revealed": false
+      }
+    ],
+    "influence_skills": [
+      {
+        "text": "Knowledge (local)",
+        "revealed": false
+      },
+      {
+        "text": "Knowledge (nature)",
+        "revealed": false
+      },
+      {
+        "text": "Profession (farmer)",
+        "revealed": false
+      },
+      {
+        "text": "Perception",
+        "revealed": false
+      },
+      {
+        "text": "Perform (oratory)",
+        "revealed": false
+      },
+      {
+        "text": "Survival",
+        "revealed": false
+      },
+      {
+        "text": "Bluff",
+        "revealed": false
+      },
+      {
+        "text": "Diplomacy",
+        "revealed": false
+      }
+    ],
+    "photo": "Onora_Piscum_Token2.png"
   }
 ]
