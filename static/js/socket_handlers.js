@@ -1,7 +1,6 @@
 // static/js/socket_handlers.js
 
 let profiles = [];
-let isGretchen = Boolean(window.IS_GRETCHEN);
 let editingIndex = null;
 let newProfilePending = false;
 let selectedIndex = 0;
@@ -21,13 +20,13 @@ const singularMap = {
 socket.on('profiles_updated', (newProfiles) => {
     profiles = newProfiles;
     if (newProfilePending) {
-        // Enter edit mode on the newly created profile
-        editingIndex = profiles.length - 1;
-        newProfilePending = false;
+      editingIndex = profiles.length - 1;
+      newProfilePending = false;
     }
     renderSidebar();
     renderDetail();
-});
+  });
+  
 
 // Create a new blank profile
 function createNewProfile() {
@@ -100,16 +99,19 @@ function renderSidebar() {
     });
 }
 
-// Renders either view or edit form in the detail pane
-function renderDetail(gretchenMode = false) {
-    isGretchen = gretchenMode;
+function renderDetail() {
+    // Always pull the true mode from the HTML page
+    const gretchenMode = Boolean(window.IS_GRETCHEN);
+  
     const container = document.getElementById('profile-detail');
     const idx = selectedIndex;
     const contentHTML = (gretchenMode && editingIndex === idx)
-        ? renderEditForm(profiles[idx], idx)
-        : renderView(profiles[idx], idx, gretchenMode);
+      ? renderEditForm(profiles[idx], idx)
+      : renderView(profiles[idx], idx, gretchenMode);
+  
     container.innerHTML = `<div class="detail-card">${contentHTML}</div>`;
-}
+  }
+  
 
 // Non-edit view with two-pane ID-card style
 function renderView(profile, idx, gretchenMode) {
