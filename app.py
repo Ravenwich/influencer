@@ -1,4 +1,4 @@
-### Updated app.py ###
+### Fully refactored and fixed app.py ###
 
 from flask import Flask, render_template, request, redirect, jsonify, url_for
 from flask_socketio import SocketIO, emit
@@ -14,58 +14,81 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 app.config['DEBUG'] = True
 app.config['PROPAGATE_EXCEPTIONS'] = True
 
-
 PROFILE_FILE = 'profiles.json'
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+# --- Profile Class ---
+class Profile:
+    def __init__(self, data):
+        self.name = data.get('name', '')
+        self.appearance = data.get('appearance', '')
+        self.background = data.get('background', '')
+        self.personality = data.get('personality', '')
+        self.goal = data.get('goal', '')
+        self.attitude = data.get('attitude', '')
+        self.benefit = data.get('benefit', '')
+        self.special = data.get('special', '')
+        self.successesNeeded = data.get('successesNeeded', 1)
+        self.influence_successes = data.get('influence_successes', 0)
+        self.biases = data.get('biases', [])
+        self.strengths = data.get('strengths', [])
+        self.weaknesses = data.get('weaknesses', [])
+        self.influence_skills = data.get('influence_skills', [])
+        self.revealed = data.get('revealed', self._initialize_revealed())
+        self.photo_filename = data.get('photo_filename', None)
+
+    def _initialize_revealed(self):
+        return {k: [False] * len(getattr(self, k)) for k in ['biases', 'strengths', 'weaknesses', 'influence_skills']}
+
+    def to_dict(self):
+        return self.__dict__
+
+# --- Profile Management ---
+def load_profiles():
+    if os.path.exists(PROFILE_FILE):
+        with open(PROFILE_FILE, 'r') as f:
+            raw_profiles = json.load(f)
+            return [Profile(p) for p in raw_profiles]
+    else:
+        return []
+
+def save_profiles():
+    with open(PROFILE_FILE, 'w') as f:
+        json.dump([p.to_dict() for p in profiles], f, indent=4)
+
+profiles = load_profiles()
+
+# --- Utility ---
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def initialize_revealed(profile):
-    if 'revealed' not in profile:
-        profile['revealed'] = {k: [False] * len(profile.get(k, [])) for k in ['biases', 'strengths', 'weaknesses', 'influence_skills']}
-
-if os.path.exists(PROFILE_FILE):
-    with open(PROFILE_FILE, 'r') as f:
-        profiles = json.load(f)
-    for p in profiles:
-        initialize_revealed(p)
-else:
-    profiles = []
-    with open(PROFILE_FILE, 'w') as f:
-        json.dump(profiles, f, indent=4)
-
+# --- Routes ---
 @app.route('/')
 def home():
     return redirect('/players')
 
 @app.route('/gm')
 def gm_page():
-    return render_template('gm.html', profiles=profiles)
+    return render_template('gm.html', profiles=[p.to_dict() for p in profiles])
 
 @app.route('/players')
 def player_page():
-    return render_template('players.html', profiles=profiles)
+    return render_template('players.html', profiles=[p.to_dict() for p in profiles])
 
 @app.route('/api/get_profiles', methods=['GET'])
 def get_profiles():
-    return jsonify(profiles)
-
-def save_profiles():
-    with open(PROFILE_FILE, 'w') as f:
-        json.dump(profiles, f, indent=4)
+    return jsonify([p.to_dict() for p in profiles])
 
 @app.route('/api/toggle_reveal', methods=['POST'])
 def toggle_reveal():
     data = request.get_json()
-    profile_index = int(data['profile_index'])
+    profile = profiles[int(data['profile_index'])]
     category = data['category']
     item_index = int(data['item_index'])
-
-    profiles[profile_index]['revealed'][category][item_index] = not profiles[profile_index]['revealed'][category][item_index]
+    profile.revealed[category][item_index] = not profile.revealed[category][item_index]
     save_profiles()
     socketio.emit('refresh_profiles')
     return jsonify(success=True)
@@ -73,8 +96,8 @@ def toggle_reveal():
 @app.route('/api/increment_success', methods=['POST'])
 def increment_success():
     data = request.get_json()
-    profile_index = int(data['profile_index'])
-    profiles[profile_index]['influence_successes'] += 1
+    profile = profiles[int(data['profile_index'])]
+    profile.influence_successes += 1
     save_profiles()
     socketio.emit('refresh_profiles')
     return jsonify(success=True)
@@ -82,8 +105,8 @@ def increment_success():
 @app.route('/api/reset_success', methods=['POST'])
 def reset_success():
     data = request.get_json()
-    profile_index = int(data['profile_index'])
-    profiles[profile_index]['influence_successes'] = 0
+    profile = profiles[int(data['profile_index'])]
+    profile.influence_successes = 0
     save_profiles()
     socketio.emit('refresh_profiles')
     return jsonify(success=True)
@@ -106,89 +129,73 @@ def create_profile():
                 print(f"Image processing error: {e}")
             photo_filename = unique_filename
 
-    data = request.form
+    data = request.form.to_dict()
 
-    new_profile = {
-        "name": data['name'],
-        "appearance": data['appearance'],
-        "background": data['background'],
-        "personality": data['personality'],
-        "biases": [x.strip() for x in data.get('biases', '').split(';') if x.strip()],
-        "strengths": [x.strip() for x in data.get('strengths', '').split(';') if x.strip()],
-        "weaknesses": [x.strip() for x in data.get('weaknesses', '').split(';') if x.strip()],
-        "influence_skills": [x.strip() for x in data.get('influence_skills', '').split(';') if x.strip()],
-        "influence_successes": 0,
-        "photo_filename": photo_filename,
-        "goal": data.get('goal', ''),
-        "attitude": data.get('attitude', ''),
-        "benefit": data.get('benefit', ''),
-        "special": data.get('special', ''),
-        "successesNeeded": int(data.get('successesNeeded', 1)),
-        "revealed": {k: [] for k in ['biases', 'strengths', 'weaknesses', 'influence_skills']}
-    }
-
-    for k in ['biases', 'strengths', 'weaknesses', 'influence_skills']:
-        new_profile['revealed'][k] = [False] * len(new_profile[k])
+    new_profile = Profile({
+        'name': data.get('name', ''),
+        'appearance': data.get('appearance', ''),
+        'background': data.get('background', ''),
+        'personality': data.get('personality', ''),
+        'goal': data.get('goal', ''),
+        'attitude': data.get('attitude', ''),
+        'benefit': data.get('benefit', ''),
+        'special': data.get('special', ''),
+        'successesNeeded': int(data.get('successesNeeded', 1)),
+        'biases': [x.strip() for x in data.get('biases', '').split(';') if x.strip()],
+        'strengths': [x.strip() for x in data.get('strengths', '').split(';') if x.strip()],
+        'weaknesses': [x.strip() for x in data.get('weaknesses', '').split(';') if x.strip()],
+        'influence_skills': [x.strip() for x in data.get('influence_skills', '').split(';') if x.strip()],
+        'photo_filename': photo_filename,
+    })
 
     profiles.append(new_profile)
     save_profiles()
     socketio.emit('refresh_profiles')
     return jsonify(success=True)
 
-def parse_list_field(value):
-    if isinstance(value, list):
-        return [item.strip() for item in value if item.strip()]
-    elif isinstance(value, str):
-        return [item.strip() for item in value.split(';') if item.strip()]
-    else:
-        return []
-
 @app.route('/api/edit_profile', methods=['POST'])
 def edit_profile():
     try:
         data = request.get_json()
-        profile_index = int(data['profile_index'])
-        profile = profiles[profile_index]
+        profile = profiles[int(data['profile_index'])]
 
-        profile['name'] = data.get('name', profile.get('name', ''))
-        profile['appearance'] = data.get('appearance', profile.get('appearance', ''))
-        profile['background'] = data.get('background', profile.get('background', ''))
-        profile['personality'] = data.get('personality', profile.get('personality', ''))
-        profile['goal'] = data.get('goal', profile.get('goal', ''))
-        profile['attitude'] = data.get('attitude', profile.get('attitude', ''))
-        profile['benefit'] = data.get('benefit', profile.get('benefit', ''))
-        profile['special'] = data.get('special', profile.get('special', ''))
-        profile['successesNeeded'] = int(data.get('successesNeeded', profile.get('successesNeeded', 1)))
-        profile['influence_successes'] = int(data.get('influence_successes', profile.get('influence_successes', 0)))
+        # Update simple fields
+        for field in ['name', 'appearance', 'background', 'personality', 'goal', 'attitude', 'benefit', 'special']:
+            if field in data:
+                setattr(profile, field, data[field])
 
+        if 'successesNeeded' in data:
+            profile.successesNeeded = int(data['successesNeeded'])
 
-        profile['biases'] = parse_list_field(data.get('biases', ''))
-        profile['strengths'] = parse_list_field(data.get('strengths', ''))
-        profile['weaknesses'] = parse_list_field(data.get('weaknesses', ''))
-        profile['influence_skills'] = parse_list_field(data.get('influence_skills', ''))
+        if 'influence_successes' in data:
+            profile.influence_successes = int(data['influence_successes'])
 
+        # Update list fields
+        for field in ['biases', 'strengths', 'weaknesses', 'influence_skills']:
+            if field in data:
+                incoming = data[field]
+                profile_list = [x.strip() for x in incoming.split(';') if x.strip()]
+                profile_list = profile_list if isinstance(profile_list, list) else []
+                setattr(profile, field, profile_list)
+
+        # Update revealed structure
         if 'revealed' in data:
-            profile['revealed'] = {}
-            for key in ['biases', 'strengths', 'weaknesses', 'influence_skills']:
-                revealed_list = data['revealed'].get(key, [])
-                rebuilt_revealed = []
-                for idx in range(len(profile.get(key, []))):
-                    if idx < len(revealed_list):
-                        rebuilt_revealed.append(revealed_list[idx])
+            for category in ['biases', 'strengths', 'weaknesses', 'influence_skills']:
+                revealed_array = data['revealed'].get(category, [])
+                rebuilt = []
+                for i in range(len(getattr(profile, category))):
+                    if i < len(revealed_array):
+                        rebuilt.append(revealed_array[i])
                     else:
-                        rebuilt_revealed.append(False)
-                profile['revealed'][key] = rebuilt_revealed
+                        rebuilt.append(False)
+                profile.revealed[category] = rebuilt
 
         save_profiles()
         socketio.emit('refresh_profiles')
         return jsonify(success=True)
     except Exception as e:
-        print("Error editing profile:", e)
+        print(f"Error editing profile: {e}")
         return jsonify(success=False), 500
-
-
-
-
 
 @app.route('/api/delete_profile', methods=['POST'])
 def delete_profile():

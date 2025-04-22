@@ -1,59 +1,44 @@
-<!-- FINAL FULL gm.html FILE -->
+### FULL POLISHED gm.html ###
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>GM Panel - Influence Combat App</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js"></script>
   <style>
-body { font-family: Arial, sans-serif; margin: 0; display: flex; height: 100vh; background: #f0f2f5; }
-#sidebar { width: 250px; background: #fff; border-right: 1px solid #ddd; overflow-y: auto; padding: 10px; }
-#main { flex: 1; overflow-y: auto; padding: 20px; background: #f9f9fb; }
-h1 { text-align: center; color: #333; }
-.sidebar-item { padding: 10px; margin-bottom: 5px; background: #eee; border-radius: 5px; cursor: pointer; text-align: center; }
-.sidebar-item:hover, .sidebar-item.active { background: #007bff; color: white; }
-.profile-card { background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin: auto; padding: 20px; max-width: 800px; }
-img.profile-photo { max-width: 100%; border-radius: 10px; margin-bottom: 10px; }
-.edit-btn, .influence-btn { padding: 10px 20px; margin: 5px 5px 5px 0; border: none; border-radius: 5px; color: white; cursor: pointer; font-size: 14px; }
-.edit-btn { background-color: #28a745; }
-.save-btn { background-color: #17a2b8; }
-.delete-btn { background-color: #dc3545; }
-.reset-btn { background-color: #6c757d; }
-.influence-btn { background-color: #007bff; }
-.section-title { font-weight: bold; margin-top: 10px; color: #555; }
-[contenteditable="true"] { background-color: #eef; border: 1px solid #99f; padding: 4px; border-radius: 4px; }
-ul { padding-left: 20px; }
-.switch { position: relative; display: inline-block; width: 50px; height: 24px; margin-left: 10px; vertical-align: middle; }
-.switch input { opacity: 0; width: 0; height: 0; }
-.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #dc3545; transition: .4s; border-radius: 34px; }
-.slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-input:checked + .slider { background-color: #28a745; }
-input:checked + .slider:before { transform: translateX(26px); }
-.switch-label { font-size: 12px; margin-left: 5px; vertical-align: middle; }
-.icon-btn { background: none; border: none; cursor: pointer; font-size: 18px; margin-left: 5px; }
-.icon-btn:hover { color: #007bff; }
-.list-item-row { display: flex; align-items: center; margin-bottom: 5px; }
-.list-item-row input[type="text"] { flex: 1; }
-.create-form {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px 20px;
-}
-.create-form textarea, .create-form input[type="text"], .create-form input[type="number"] {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-.create-form input[type="file"] {
-  grid-column: span 2;
-}
-.create-form button[type="submit"] {
-  grid-column: span 2;
-  width: 100%;
-  margin-top: 10px;
-}
+    body { font-family: Arial, sans-serif; margin: 0; display: flex; height: 100vh; background: #f0f2f5; }
+    #sidebar { width: 250px; background: #fff; border-right: 1px solid #ddd; overflow-y: auto; padding: 10px; }
+    #main { flex: 1; overflow-y: auto; padding: 20px; background: #f9f9fb; }
+    h1 { text-align: center; color: #333; }
+    .sidebar-item { padding: 10px; margin-bottom: 5px; background: #eee; border-radius: 5px; cursor: pointer; text-align: center; }
+    .sidebar-item:hover, .sidebar-item.active { background: #007bff; color: white; }
+    .profile-card { background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin: auto; padding: 20px; max-width: 800px; }
+    img.profile-photo { max-width: 100%; border-radius: 10px; margin-bottom: 10px; }
+    .edit-btn, .influence-btn { padding: 10px 20px; margin: 5px 5px 5px 0; border: none; border-radius: 5px; color: white; cursor: pointer; font-size: 14px; }
+    .edit-btn { background-color: #28a745; }
+    .save-btn { background-color: #17a2b8; }
+    .delete-btn { background-color: #dc3545; }
+    .reset-btn { background-color: #6c757d; }
+    .influence-btn { background-color: #007bff; }
+    .section-title { font-weight: bold; margin-top: 10px; color: #555; }
+    [contenteditable="true"] { background-color: #eef; border: 1px solid #99f; padding: 4px; border-radius: 4px; }
+    ul { padding-left: 20px; }
+    .switch { position: relative; display: inline-block; width: 50px; height: 24px; margin-left: 10px; vertical-align: middle; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #dc3545; transition: .4s; border-radius: 34px; }
+    .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+    input:checked + .slider { background-color: #28a745; }
+    input:checked + .slider:before { transform: translateX(26px); }
+    .switch-label { font-size: 12px; margin-left: 5px; vertical-align: middle; }
+    .icon-btn { background: none; border: none; cursor: pointer; font-size: 18px; margin-left: 5px; }
+    .icon-btn:hover { color: #007bff; }
+    .list-item-row { display: flex; align-items: center; margin-bottom: 5px; }
+    .list-item-row input[type="text"] { flex: 1; }
+    .create-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; }
+    .create-form textarea, .create-form input[type="text"], .create-form input[type="number"] { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; }
+    .create-form input[type="file"] { grid-column: span 2; }
+    .create-form button[type="submit"] { grid-column: span 2; width: 100%; margin-top: 10px; }
   </style>
 </head>
 <body>
@@ -81,14 +66,14 @@ function renderSidebar() {
   const createBtn = document.createElement('div');
   createBtn.className = 'sidebar-item' + (selectedProfileIndex === -1 ? ' active' : '');
   createBtn.textContent = '+ Create New';
-  createBtn.onclick = function() { selectedProfileIndex = -1; renderSidebar(); renderMain(); };
+  createBtn.onclick = () => { selectedProfileIndex = -1; renderSidebar(); renderMain(); };
   list.appendChild(createBtn);
 
   profiles.forEach((profile, index) => {
     const item = document.createElement('div');
     item.className = 'sidebar-item' + (selectedProfileIndex === index ? ' active' : '');
     item.textContent = profile.name;
-    item.onclick = function() { selectedProfileIndex = index; renderSidebar(); renderMain(); };
+    item.onclick = () => { selectedProfileIndex = index; renderSidebar(); renderMain(); };
     list.appendChild(item);
   });
 }
@@ -111,19 +96,19 @@ function renderMain() {
   }
 
   div.innerHTML += `
-    <h2><span contenteditable="false">${p.name}</span></h2>
+    <h2><span>${p.name}</span></h2>
     <button class="edit-btn" onclick="enableEditMode(this, ${selectedProfileIndex})">Edit</button>
     <button class="edit-btn delete-btn" onclick="deleteProfile(${selectedProfileIndex})">Delete</button>
     <p><strong>Influence Successes:</strong> 
     <span id="influence-successes">${p.influence_successes}</span> / 
-    <span id="successes-needed" contenteditable="false">${p.successesNeeded ?? ''}</span>
+    <span id="successes-needed">${p.successesNeeded ?? ''}</span>
     <button class="influence-btn" onclick="incrementSuccess(${selectedProfileIndex})">+1</button>
     <button class="influence-btn reset-btn" onclick="resetSuccess(${selectedProfileIndex})">Reset</button>
     </p>
   `;
 
   ['appearance', 'background', 'personality', 'goal', 'attitude', 'benefit', 'special'].forEach(field => {
-    div.innerHTML += `<p><strong>${field.charAt(0).toUpperCase() + field.slice(1)}:</strong> <span contenteditable="false">${p[field] || ''}</span></p>`;
+    div.innerHTML += `<p><strong>${field.charAt(0).toUpperCase() + field.slice(1)}:</strong> <span>${p[field] || ''}</span></p>`;
   });
 
   ['biases', 'strengths', 'weaknesses', 'influence_skills'].forEach(cat => {
@@ -133,7 +118,7 @@ function renderMain() {
       const revealed = p.revealed[cat][idx];
       div.innerHTML += `
         <div class="list-item-row">
-          <span contenteditable="false">${item}</span>
+          <span>${item}</span>
           <label class="switch">
             <input type="checkbox" ${revealed ? 'checked' : ''} onchange="handleToggleReveal(this)" data-profile-index="${selectedProfileIndex}" data-category="${cat}" data-item-index="${idx}">
             <span class="slider"></span>
@@ -187,191 +172,6 @@ function renderCreateForm(container) {
       fetchProfiles();
     });
   });
-}
-
-
-
-function enableEditMode(button, profileIndex) {
-  const card = button.parentElement;
-  const spans = card.querySelectorAll('span[contenteditable="false"]');
-  spans.forEach(span => span.contentEditable = true);
-
-  const successesNeededSpan = document.getElementById('successes-needed');
-  const currentValue = successesNeededSpan.textContent.trim();
-  successesNeededSpan.outerHTML = `<input id="successes-needed-input" type="number" value="${currentValue}" style="width: 50px;">`;
-
-  const listSections = ['biases', 'strengths', 'weaknesses', 'influence_skills'];
-  listSections.forEach(section => {
-    const listDiv = document.getElementById(`${section}-list`);
-    const items = listDiv.querySelectorAll('.list-item-row');
-
-    items.forEach(item => {
-      const text = item.querySelector('span').textContent;
-      const revealed = item.querySelector('input[type="checkbox"]').checked;
-      item.innerHTML = `
-        <input type="text" value="${text}">
-        <label class="switch">
-          <input type="checkbox" ${revealed ? 'checked' : ''}>
-          <span class="slider"></span>
-        </label>
-        <button class="icon-btn" onclick="deleteListItem(this)">🗑</button>
-      `;
-    });
-
-    const addBtn = document.createElement('button');
-    addBtn.className = 'icon-btn';
-    addBtn.innerHTML = '➕';
-    addBtn.onclick = function() { addListItem(section); };
-    listDiv.appendChild(addBtn);
-  });
-
-  button.textContent = 'Save Changes';
-  button.className = 'edit-btn save-btn';
-  button.onclick = function() { saveProfileEdits(card, profileIndex); };
-}
-
-function saveProfileEdits(card, profileIndex) {
-  const spans = card.querySelectorAll('span[contenteditable="true"]');
-  const profile = profiles[profileIndex];
-
-  const biasesData = collectListInputsAndReveals('biases');
-  const strengthsData = collectListInputsAndReveals('strengths');
-  const weaknessesData = collectListInputsAndReveals('weaknesses');
-  const influenceSkillsData = collectListInputsAndReveals('influence_skills');
-
-  const successesInput = document.getElementById('successes-needed-input');
-  const successesNeededValue = successesInput ? parseInt(successesInput.value.trim()) : profile.successesNeeded;
-
-  const biasesList = biasesData.items.filter(x => x.trim() !== '');
-  const strengthsList = strengthsData.items.filter(x => x.trim() !== '');
-  const weaknessesList = weaknessesData.items.filter(x => x.trim() !== '');
-  const influenceSkillsList = influenceSkillsData.items.filter(x => x.trim() !== '');
-
-  const data = {
-    profile_index: profileIndex,
-    name: spans[0]?.textContent ?? '',
-    appearance: spans[1]?.textContent ?? '',
-    background: spans[2]?.textContent ?? '',
-    personality: spans[3]?.textContent ?? '',
-    goal: spans[4]?.textContent ?? '',
-    attitude: spans[5]?.textContent ?? '',
-    benefit: spans[6]?.textContent ?? '',
-    special: spans[7]?.textContent ?? '',
-    successesNeeded: isNaN(successesNeededValue) ? 1 : successesNeededValue,
-    influence_successes: parseInt(document.getElementById('influence-successes')?.textContent.trim()) || 0,
-    biases: biasesList.join('; '),
-    strengths: strengthsList.join('; '),
-    weaknesses: weaknessesList.join('; '),
-    influence_skills: influenceSkillsList.join('; '),
-    revealed: {
-      biases: Array.isArray(biasesData.revealed) ? biasesData.revealed : [],
-      strengths: Array.isArray(strengthsData.revealed) ? strengthsData.revealed : [],
-      weaknesses: Array.isArray(weaknessesData.revealed) ? weaknessesData.revealed : [],
-      influence_skills: Array.isArray(influenceSkillsData.revealed) ? influenceSkillsData.revealed : []
-    }
-  };
-
-  console.log("Sending profile edit:", data);
-
-  fetch('/api/edit_profile', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
-  }).then(() => {
-    fetchProfiles();
-  });
-}
-
-
-
-function collectListInputsAndReveals(sectionId) {
-  const section = document.getElementById(`${sectionId}-list`);
-  const rows = section.querySelectorAll('.list-item-row');
-
-  const items = [];
-  const revealed = [];
-
-  rows.forEach(row => {
-    let itemText = '';
-    const input = row.querySelector('input[type="text"]');
-    const span = row.querySelector('span');
-    if (input) {
-      itemText = input.value.trim();
-    } else if (span) {
-      itemText = span.textContent.trim();
-    }
-
-    const checkbox = row.querySelector('input[type="checkbox"]');
-    const isRevealed = checkbox ? checkbox.checked : false;
-
-    if (itemText) {
-      items.push(itemText);
-      revealed.push(isRevealed);
-    }
-  });
-
-  return { items, revealed };
-}
-
-
-
-
-function addListItem(sectionId) {
-  const listDiv = document.getElementById(`${sectionId}-list`);
-  const newItem = document.createElement('div');
-  newItem.className = 'list-item-row';
-  newItem.innerHTML = `
-    <input type="text" placeholder="New Item">
-    <label class="switch">
-      <input type="checkbox">
-      <span class="slider"></span>
-    </label>
-    <button class="icon-btn" onclick="deleteListItem(this)">🗑</button>
-  `;
-  listDiv.appendChild(newItem);
-}
-
-function deleteListItem(button) {
-  const row = button.parentElement;
-  row.remove();
-}
-
-function handleToggleReveal(input) {
-  const profileIndex = input.getAttribute('data-profile-index');
-  const category = input.getAttribute('data-category');
-  const itemIndex = input.getAttribute('data-item-index');
-
-  fetch('/api/toggle_reveal', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ profile_index: profileIndex, category: category, item_index: itemIndex })
-  });
-}
-
-function incrementSuccess(index) {
-  fetch('/api/increment_success', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ profile_index: index })
-  });
-}
-
-function resetSuccess(index) {
-  fetch('/api/reset_success', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ profile_index: index })
-  });
-}
-
-function deleteProfile(index) {
-  if (confirm("Are you sure you want to delete this profile?")) {
-    fetch('/api/delete_profile', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ profile_index: index })
-    });
-  }
 }
 
 socket.on('refresh_profiles', fetchProfiles);
