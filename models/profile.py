@@ -1,10 +1,11 @@
 class Profile:
-    def __init__(self, name, appearance, background, personality, goal, benefit, special,
+    def __init__(self, name, appearance, background, personality, attitude, goal, benefit, special,
                  influence_successes, successes_needed, biases, strengths, weaknesses, influence_skills, photo):
         self.name = name
         self.appearance = appearance
         self.background = background
         self.personality = personality
+        self.attitude = attitude
         self.goal = goal
         self.benefit = benefit
         self.special = special
@@ -44,6 +45,7 @@ class Profile:
             appearance=data.get('appearance', ''),
             background=data.get('background', ''),
             personality=data.get('personality', ''),
+            attitude=data.get('attitude', ''),
             goal=data.get('goal', ''),
             benefit=data.get('benefit', ''),
             special=data.get('special', ''),

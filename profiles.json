@@ -2,7 +2,7 @@
   {
     "name": "Captain Elira",
     "appearance": "A tall woman with sharp green eyes, wearing a long military coat adorned with medals.",
-    "background": "Once a respected officer, now a rogue agent operating outside the chain of command.",
+    "background": "Once a respected officer, now a rogue agent operating outside the chain of command.s",
     "personality": "Cunning and methodical, but still retains a surprising sense of humors.",
     "goal": "To dismantle the corrupt hierarchy that betrayed her, piece by piece.",
     "benefit": "Can call in favors from old contacts within the military.",
@@ -90,5 +90,53 @@
       }
     ],
     "photo": "scholar_veyra.png"
+  },
+  {
+    "name": "COUNT BARTELBY LOTHEED",
+    "appearance": "Bartelby is tall, thin, and handsome, with thick hair and expressive eyes.",
+    "background": "Steward of the Palace of Birdsong.",
+    "personality": "Bartelby is aloof, obsessive, and loyal to those he cares about. He is arrogant and charismatic in  equal measure. He\u2019s exactly as courteous to others and the help as etiquette demands.",
+    "goal": "Bartelby wants to maintain a tight grip on Meratt.",
+    "benefit": "Cool stuff",
+    "special": "He's not a vammpire",
+    "influence_successes": 0,
+    "successes_needed": 10,
+    "biases": [
+      {
+        "text": "Bartelby despises fools, and has no time for anyone without an Intelligence score of at least 14 (\u20132).",
+        "revealed": false
+      },
+      {
+        "text": "He admires fellow practitioners of the arcane arts (+2).",
+        "revealed": false
+      }
+    ],
+    "strengths": [
+      {
+        "text": "Bartelby has only contempt for nonhumans and feels they should know their place and  remain quiet. Invoking any sense of collective identity with non-humans raises his hackles.",
+        "revealed": false
+      }
+    ],
+    "weaknesses": [
+      {
+        "text": "Bartelby is greatly swayed by gaudy gifts. Anyone presenting him with a gift worth at least 500 gp gains a +1 bonus on checks to influence him.",
+        "revealed": false
+      }
+    ],
+    "influence_skills": [
+      {
+        "text": "Appraise",
+        "revealed": false
+      },
+      {
+        "text": "Knowledge (arcana)",
+        "revealed": false
+      },
+      {
+        "text": "Diplomacy",
+        "revealed": false
+      }
+    ],
+    "photo": "default.png"
   }
 ]
