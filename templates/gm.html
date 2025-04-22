@@ -292,20 +292,27 @@ function collectListInputsAndReveals(sectionId) {
   const revealed = [];
 
   rows.forEach(row => {
-    const textInput = row.querySelector('input[type="text"]');
-    const revealInput = row.querySelector('input[type="checkbox"]');
-
-    if (textInput) {
-      items.push(textInput.value.trim());
+    let itemText = '';
+    const input = row.querySelector('input[type="text"]');
+    const span = row.querySelector('span');
+    if (input) {
+      itemText = input.value.trim();
+    } else if (span) {
+      itemText = span.textContent.trim();
     }
 
-    if (revealInput) {
-      revealed.push(revealInput.checked);
+    const checkbox = row.querySelector('input[type="checkbox"]');
+    const isRevealed = checkbox ? checkbox.checked : false;
+
+    if (itemText) {
+      items.push(itemText);
+      revealed.push(isRevealed);
     }
   });
 
   return { items, revealed };
 }
+
 
 
 
