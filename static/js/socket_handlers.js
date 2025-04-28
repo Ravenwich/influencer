@@ -45,7 +45,7 @@ function createNewProfile() {
         strengths: [{ text: '', revealed: false }],
         weaknesses: [{ text: '', revealed: false }],
         influence_skills: [{ text: '', revealed: false }],
-        photo: 'default.png'
+        photoUrl: '/static/images/default.png'
     };
     newProfilePending = true;
     socket.emit('create_profile', blank);
@@ -117,7 +117,7 @@ function renderDetail() {
 function renderView(profile, idx, gretchenMode) {
     let html = `
     <div class="profile-header">
-      <img src="/static/images/${profile.photo}" alt="${profile.name}" />
+      <img src="${profile.photoUrl || '/static/images/default.png'}" alt="${profile.name}" />
       <h2>${profile.name}</h2>
     </div>
     <div class="profile-body">
@@ -374,7 +374,7 @@ function cancelEdit() {
 }
 async function saveEdits(idx) {
 
-let photoFilename = profiles[idx].photo; 
+let photoUrl = profiles[idx].photoUrl || '/static/images/default.png';
 const inputFile = document.getElementById('edit-photo-file');
 if (inputFile && inputFile.files.length > 0) {
   // upload to server
@@ -382,8 +382,8 @@ if (inputFile && inputFile.files.length > 0) {
   form.append('photo', inputFile.files[0]);
   const resp = await fetch('/upload_photo', { method: 'POST', body: form });
   const data = await resp.json();
-  if (data.filename) {
-    photoFilename = data.filename;
+  if (data.driveId) {
+    photoUrl = `/images/${data.driveId}`;
   }
 }
     const gatherList = category => profiles[idx][category]
@@ -425,7 +425,7 @@ if (inputFile && inputFile.files.length > 0) {
             revealed: item.revealed
           })),
       
-          photo: photoFilename
+          photoUrl: photoUrl
         };
       
         socket.emit('update_profile', { index: idx, profile: updated });
