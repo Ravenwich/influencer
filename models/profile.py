@@ -1,6 +1,6 @@
 class Profile:
     def __init__(self, name, appearance, background, personality, attitude, goal, benefit, special,
-                 influence_successes, successes_needed, biases, strengths, weaknesses, influence_skills, photo):
+                 influence_successes, successes_needed, biases, strengths, weaknesses, influence_skills, photoUrl):
         self.name = name
         self.appearance = appearance
         self.background = background
@@ -15,7 +15,7 @@ class Profile:
         self.strengths = strengths
         self.weaknesses = weaknesses
         self.influence_skills = influence_skills
-        self.photoUrl = photo
+        self.photoUrl = photoUrl
 
     def to_dict(self):
         return self.__dict__
@@ -55,6 +55,6 @@ class Profile:
             strengths=ensure_list_of_dicts(data.get('strengths', [])),
             weaknesses=ensure_list_of_dicts(data.get('weaknesses', [])),
             influence_skills=ensure_list_of_dicts(data.get('influence_skills', [])),
-            photoUrl=data.get('photo', '')
+            photoUrl=data.get('photoUrl', '')
         )
 
