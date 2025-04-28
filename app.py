@@ -1,4 +1,4 @@
-import os, json, io, mimetypes
+import os, json, io, mimetypes, base64
 from flask import Flask, render_template, request, jsonify, send_file, make_response
 from flask_socketio import SocketIO, emit
 from werkzeug.utils import secure_filename
@@ -22,10 +22,25 @@ _image_cache: dict[str,ImageCacheEntry] = {}
 
 # ─────────── Drive Service Helper ───────────
 def get_drive_service():
-    key_path = os.environ.get('SERVICE_ACCOUNT_FILE', 'service-account.json')
-    creds = service_account.Credentials.from_service_account_file(
-        key_path, scopes=SCOPES
-    )
+    # 1) Prefer the JSON blob in env var
+    raw = os.environ.get('GOOGLE_SERVICE_ACCOUNT_JSON')
+    if raw:
+        try:
+            # If you base64-encoded the JSON, decode it
+            info = json.loads(base64.b64decode(raw))
+        except Exception:
+            # Otherwise assume it's the raw JSON text
+            info = json.loads(raw)
+        creds = service_account.Credentials.from_service_account_info(
+            info, scopes=SCOPES
+        )
+    else:
+        # 2) Fallback to a file on disk (e.g. service-account.json)
+        key_path = os.environ['SERVICE_ACCOUNT_FILE']
+        creds = service_account.Credentials.from_service_account_file(
+            key_path, scopes=SCOPES
+        )
+
     return build('drive', 'v3', credentials=creds)
 
 # ─────────── Profile Load / Save ───────────
