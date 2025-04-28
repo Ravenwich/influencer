@@ -15,7 +15,7 @@ class Profile:
         self.strengths = strengths
         self.weaknesses = weaknesses
         self.influence_skills = influence_skills
-        self.photo = photo
+        self.photoUrl = photo
 
     def to_dict(self):
         return self.__dict__
@@ -55,6 +55,6 @@ class Profile:
             strengths=ensure_list_of_dicts(data.get('strengths', [])),
             weaknesses=ensure_list_of_dicts(data.get('weaknesses', [])),
             influence_skills=ensure_list_of_dicts(data.get('influence_skills', [])),
-            photo=data.get('photo', '')
+            photoUrl=data.get('photo', '')
         )
 
