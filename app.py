@@ -77,11 +77,14 @@ profiles = load_profiles()
 # ─────────── Image Proxy & Upload ───────────
 @app.route('/images/<drive_id>')
 def serve_image(drive_id):
+    # 1) Try in-memory cache
     entry = _image_cache.get(drive_id)
     if entry:
         mime, data = entry.mime, entry.data
     else:
         drive = get_drive_service()
+
+        # 2) Fetch metadata
         meta = drive.files().get(
             fileId=drive_id,
             fields='name,mimeType',
@@ -90,20 +93,27 @@ def serve_image(drive_id):
         mime = meta.get('mimeType')
         if not mime or mime == 'application/octet-stream':
             mime, _ = mimetypes.guess_type(meta.get('name',''))
-        buf = io.BytesIO()
-        downloader = MediaIoBaseDownload(
-            buf,
-            drive.files().get_media(fileId=drive_id)
+
+        # 3) Download raw bytes (with supportsAllDrives)
+        req = drive.files().get_media(
+            fileId=drive_id,
+            supportsAllDrives=True
         )
+        buf = io.BytesIO()
+        downloader = MediaIoBaseDownload(buf, req)
         done = False
         while not done:
-            _, done = downloader.next_chunk()
+            status, done = downloader.next_chunk()
         data = buf.getvalue()
+
+        # 4) Cache it for next time
         _image_cache[drive_id] = ImageCacheEntry(mime, data)
 
+    # 5) Serve with correct headers
     resp = make_response(data)
     resp.headers.set('Content-Type', mime or 'application/octet-stream')
     resp.headers.set('Cache-Control', 'public, max-age=86400')
+    app.logger.debug(f"🔍 Served image {drive_id} as {mime}, {len(data)} bytes")
     return resp
 
 @app.route('/upload_photo', methods=['POST'])
@@ -128,6 +138,7 @@ def upload_photo():
         fileId=gfile['id'],
         body={'role':'reader','type':'anyone'}
     ).execute()
+    _image_cache.pop(gfile['id'], None)
 
     return jsonify({ "driveId": gfile['id'] })
 
